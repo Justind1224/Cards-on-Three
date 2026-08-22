@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TWHS Track &amp; Field History</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Playfair Display', Georgia, serif; }
+
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 2px;
+      background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    .feature-card { transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.32s ease; }
+    .feature-card:hover { transform: translateY(-5px); box-shadow: 0 8px 28px rgba(192,24,42,0.15), 0 16px 40px rgba(27,42,94,0.12); }
+    .feature-card:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; }
+    .feature-img { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .feature-card:hover .feature-img { transform: scale(1.06); }
+
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem; border-radius: 0.375rem;
+      font-weight: 600; font-size: 0.9375rem;
+      background: #C0182A;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(192,24,42,0.38);
+      transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+    }
+    .cta-btn:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(192,24,42,0.5); }
+    .cta-btn:active { transform: scale(0.97); }
+    .cta-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+    .cta-btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem; border-radius: 0.375rem;
+      font-weight: 600; font-size: 0.9375rem;
+      color: #E2E8F0;
+      border: 1.5px solid rgba(255,255,255,0.22);
+      transition: background 0.18s ease, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .cta-btn-ghost:hover { background: rgba(255,255,255,0.09); transform: scale(1.03); }
+    .cta-btn-ghost:active { background: rgba(255,255,255,0.15); transform: scale(0.97); }
+    .cta-btn-ghost:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+    .link-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem; border-radius: 0.5rem;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(27,42,94,0.08);
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      text-decoration: none;
+    }
+    .link-row:hover { background: #F8F9FB; box-shadow: 0 2px 8px rgba(27,42,94,0.12); }
+    .link-row:active { background: #F0F2F7; }
+    .link-row:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 0.5rem; }
+
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    /* ── Feature Carousel ── */
+    .fc-dot {
+      height: 8px; width: 8px; border-radius: 4px; padding: 0;
+      background: rgba(27,42,94,0.18); border: none; cursor: pointer;
+      transition: background 0.25s ease, width 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .fc-dot.active { background: #C0182A; width: 24px; }
+    .fc-dot:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 4px; }
+    .fc-nav-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+      background: rgba(255,255,255,0.92); color: #1B2A5E; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.1);
+      transition: background 0.15s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s ease;
+    }
+    .fc-nav-btn:hover { background: #fff; transform: translateY(-50%) scale(1.1); box-shadow: 0 4px 22px rgba(0,0,0,0.25); }
+    .fc-nav-btn:active { transform: translateY(-50%) scale(0.91); }
+    .fc-nav-btn:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 50%; }
+    .fc-slide-img { transition: transform 0.65s cubic-bezier(0.4,0,0.2,1); }
+    .fc-slide:hover .fc-slide-img { transform: scale(1.04); }
+
+    /* Grain overlay */
+    .grain::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+  </style>
+</head>
+<body style="background:#F8F9FB; color:#1E293B;">
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730; position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:76px;">
+      <a href="index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none; flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:56px; width:auto; filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+        <span style="color:#fff; font-family:'Playfair Display',serif; font-size:0.95rem; font-weight:700; letter-spacing:-0.01em; display:none;">Track &amp; Field History</span>
+      </a>
+      <nav style="display:flex; align-items:center; gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Stories</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem; border-radius:0.375rem; background:#C0182A; color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(192,24,42,0.35); transition:transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 55%,#243575 100%); position:relative; overflow:hidden;">
+    <!-- Radial accent blobs -->
+    <div style="position:absolute;top:-10%;right:-5%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.18) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-15%;left:-8%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.10) 0%,transparent 70%);pointer-events:none;"></div>
+
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:5rem 1.5rem 4.5rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:0.5rem;margin-bottom:1.25rem;padding:0.3rem 0.85rem;border-radius:999px;background:rgba(192,24,42,0.15);border:1px solid rgba(192,24,42,0.3);color:#F9A8B3;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+            Thomas Worthington Track &amp; Field History
+          </div>
+          <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2.6rem,5vw,3.5rem);font-weight:800;color:#fff;line-height:1.06;letter-spacing:-0.03em;margin-bottom:1.25rem;">
+            Cards on three...
+          </h1>
+          <p style="color:#CBD5E1;font-size:1.05rem;line-height:1.75;margin-bottom:2rem;max-width:520px;">
+            A complete archive documenting the records, seasons, championships, and stories of every athlete and coach who represented the Cardinals.
+          </p>
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+            <a href="records.html" class="cta-btn">View Records</a>
+            <a href="seasons.html" class="cta-btn-ghost">Browse Seasons</a>
+          </div>
+        </div>
+        <div style="position:relative;">
+          <div style="border-radius:0.875rem;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.5);">
+            <img src="images/banner (1).webp" alt="TWHS Track and Field" style="width:100%;height:340px;object-fit:cover;display:block;" />
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,23,48,0.55) 0%,transparent 55%);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Feature Cards Carousel ── -->
+  <section style="background:#fff;padding:4rem 0;border-bottom:1px solid #EEF0F5;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem;">
+
+      <!-- Carousel outer (nav buttons positioned relative to this) -->
+      <div style="position:relative;">
+
+        <!-- Viewport -->
+        <div id="fc-viewport" style="overflow:hidden;border-radius:1rem;box-shadow:0 8px 32px rgba(27,42,94,0.12),0 20px 56px rgba(27,42,94,0.07);position:relative;">
+
+          <!-- Track -->
+          <div id="fc-track" style="display:flex;will-change:transform;transition:transform 0.55s cubic-bezier(0.4,0,0.2,1);">
+
+            <!-- Slide 1: Records -->
+            <a href="records.html" class="fc-slide" style="flex:0 0 100%;min-width:0;position:relative;height:380px;display:block;text-decoration:none;overflow:hidden;">
+              <img src="images/banner (2).webp" alt="Records" class="fc-slide-img" style="width:100%;height:100%;object-fit:cover;object-position:center 39%;display:block;" />
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,23,48,0.90) 0%,rgba(13,23,48,0.15) 55%,transparent 100%);pointer-events:none;"></div>
+              <div style="position:absolute;bottom:0;left:0;right:0;padding:2.25rem 2.75rem;pointer-events:none;">
+                <div style="display:inline-flex;align-items:center;margin-bottom:0.6rem;padding:0.22rem 0.7rem;border-radius:999px;background:rgba(192,24,42,0.85);color:#fff;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">Records</div>
+                <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,2.5vw,2.25rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.6rem;">School Records</h2>
+                <p style="color:#CBD5E1;font-size:0.875rem;line-height:1.7;margin-bottom:1.25rem;max-width:520px;">School and program records across every event — sprints, distance, hurdles, field, and relays.</p>
+                <span style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.55rem 1.1rem;border-radius:0.375rem;background:#C0182A;color:#fff;font-size:0.8125rem;font-weight:600;box-shadow:0 3px 10px rgba(192,24,42,0.4);">View Records <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke-width:2.5;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+              </div>
+            </a>
+
+            <!-- Slide 2: Seasons -->
+            <a href="seasons.html" class="fc-slide" style="flex:0 0 100%;min-width:0;position:relative;height:380px;display:block;text-decoration:none;overflow:hidden;">
+              <img src="images/justin_braun 2.webp" alt="Seasons" class="fc-slide-img" style="width:100%;height:100%;object-fit:cover;object-position:center 12%;display:block;" />
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,23,48,0.90) 0%,rgba(13,23,48,0.15) 55%,transparent 100%);pointer-events:none;"></div>
+              <div style="position:absolute;bottom:0;left:0;right:0;padding:2.25rem 2.75rem;pointer-events:none;">
+                <div style="display:inline-flex;align-items:center;margin-bottom:0.6rem;padding:0.22rem 0.7rem;border-radius:999px;background:rgba(27,42,94,0.85);color:#fff;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">Seasons</div>
+                <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,2.5vw,2.25rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.6rem;">Seasons Archive</h2>
+                <p style="color:#CBD5E1;font-size:0.875rem;line-height:1.7;margin-bottom:1.25rem;max-width:520px;">Year-by-year results, rosters, and standout performances from every competitive season.</p>
+                <span style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.55rem 1.1rem;border-radius:0.375rem;background:#C0182A;color:#fff;font-size:0.8125rem;font-weight:600;box-shadow:0 3px 10px rgba(192,24,42,0.4);">Browse Seasons <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke-width:2.5;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+              </div>
+            </a>
+
+            <!-- Slide 3: Coaches -->
+            <a href="coaches.html" class="fc-slide" style="flex:0 0 100%;min-width:0;position:relative;height:380px;display:block;text-decoration:none;overflow:hidden;">
+              <img src="images/lesEisenhart.png" alt="Coaches" class="fc-slide-img" style="width:100%;height:100%;object-fit:cover;object-position:center 12%;display:block;" />
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,23,48,0.90) 0%,rgba(13,23,48,0.15) 55%,transparent 100%);pointer-events:none;"></div>
+              <div style="position:absolute;bottom:0;left:0;right:0;padding:2.25rem 2.75rem;pointer-events:none;">
+                <div style="display:inline-flex;align-items:center;margin-bottom:0.6rem;padding:0.22rem 0.7rem;border-radius:999px;background:rgba(192,24,42,0.85);color:#fff;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">Coaches</div>
+                <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,2.5vw,2.25rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.6rem;">Coaching Staff</h2>
+                <p style="color:#CBD5E1;font-size:0.875rem;line-height:1.7;margin-bottom:1.25rem;max-width:520px;">The coaches who built and sustained this program — their tenures, records, and legacies.</p>
+                <span style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.55rem 1.1rem;border-radius:0.375rem;background:#C0182A;color:#fff;font-size:0.8125rem;font-weight:600;box-shadow:0 3px 10px rgba(192,24,42,0.4);">Meet the Coaches <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke-width:2.5;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+              </div>
+            </a>
+
+            <!-- Slide 4: Stories -->
+            <a href="stories.html" class="fc-slide" style="flex:0 0 100%;min-width:0;position:relative;height:380px;display:block;text-decoration:none;overflow:hidden;">
+              <img src="images/justin_braun.webp" alt="Stories" class="fc-slide-img" style="width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;" />
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,23,48,0.90) 0%,rgba(13,23,48,0.15) 55%,transparent 100%);pointer-events:none;"></div>
+              <div style="position:absolute;bottom:0;left:0;right:0;padding:2.25rem 2.75rem;pointer-events:none;">
+                <div style="display:inline-flex;align-items:center;margin-bottom:0.6rem;padding:0.22rem 0.7rem;border-radius:999px;background:rgba(27,42,94,0.85);color:#fff;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">Stories</div>
+                <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,2.5vw,2.25rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.6rem;">Athlete Stories</h2>
+                <p style="color:#CBD5E1;font-size:0.875rem;line-height:1.7;margin-bottom:1.25rem;max-width:520px;">Personal accounts and memorable moments from athletes who competed as Cardinals.</p>
+                <span style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.55rem 1.1rem;border-radius:0.375rem;background:#C0182A;color:#fff;font-size:0.8125rem;font-weight:600;box-shadow:0 3px 10px rgba(192,24,42,0.4);">Read Stories <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke-width:2.5;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+              </div>
+            </a>
+
+          </div><!-- /track -->
+
+          <!-- Nav buttons (inside viewport so they overlay the image) -->
+          <button class="fc-nav-btn" id="fc-prev" aria-label="Previous slide" style="left:1rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke-width:2.5;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button class="fc-nav-btn" id="fc-next" aria-label="Next slide" style="right:1rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke-width:2.5;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
+
+        </div><!-- /viewport -->
+
+        <!-- Dots -->
+        <div style="display:flex;justify-content:center;align-items:center;gap:0.4rem;margin-top:1.25rem;">
+          <button class="fc-dot active" data-fc-idx="0" aria-label="Slide 1"></button>
+          <button class="fc-dot" data-fc-idx="1" aria-label="Slide 2"></button>
+          <button class="fc-dot" data-fc-idx="2" aria-label="Slide 3"></button>
+          <button class="fc-dot" data-fc-idx="3" aria-label="Slide 4"></button>
+        </div>
+
+      </div><!-- /outer -->
+    </div>
+  </section>
+
+  <!-- ── Content Section ── -->
+  <section style="padding:4.5rem 0;background:#F8F9FB;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2.5rem;align-items:start;">
+
+        <!-- About -->
+        <div>
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+            <div style="width:4px;height:32px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.02em;margin:0;">About This Archive</h2>
+          </div>
+          <div style="border-radius:0.75rem;overflow:hidden;margin-bottom:1.25rem;position:relative;box-shadow:0 4px 20px rgba(27,42,94,0.1);">
+            <img src="images/carina napoleon.webp" alt="TWHS Track Program" style="width:100%;height:210px;object-fit:cover;object-position:center 10%;display:block;" />
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,23,48,0.5) 0%,transparent 60%);"></div>
+          </div>
+          <p style="color:#475569;font-size:0.9rem;line-height:1.78;margin:0;">
+            This site preserves the full competitive history of the TWHS Track &amp; Field program — from its earliest seasons through district titles and state championships. Every record, every roster, every milestone, documented for athletes, alumni, and fans of the Cardinal program.
+          </p>
+        </div>
+
+        <!-- Navigate -->
+        <div>
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+            <div style="width:4px;height:32px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.02em;margin:0;">Explore the Site</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;">
+            <a href="records.html" class="link-row">
+              <span style="width:8px;height:8px;border-radius:50%;background:#C0182A;flex-shrink:0;"></span>
+              <span style="font-size:0.875rem;font-weight:500;color:#334155;">Program Records — all events &amp; relays</span>
+            </a>
+            <a href="allTimeList.html" class="link-row">
+              <span style="width:8px;height:8px;border-radius:50%;background:#C0182A;flex-shrink:0;"></span>
+              <span style="font-size:0.875rem;font-weight:500;color:#334155;">All-Time Performance Lists</span>
+            </a>
+            <a href="championships.html" class="link-row">
+              <span style="width:8px;height:8px;border-radius:50%;background:#C0182A;flex-shrink:0;"></span>
+              <span style="font-size:0.875rem;font-weight:500;color:#334155;">Championships &amp; State Titles</span>
+            </a>
+            <a href="seasons.html" class="link-row">
+              <span style="width:8px;height:8px;border-radius:50%;background:#C0182A;flex-shrink:0;"></span>
+              <span style="font-size:0.875rem;font-weight:500;color:#334155;">Season-by-Season Results</span>
+            </a>
+            <a href="coaches.html" class="link-row">
+              <span style="width:8px;height:8px;border-radius:50%;background:#C0182A;flex-shrink:0;"></span>
+              <span style="font-size:0.875rem;font-weight:500;color:#334155;">Coaching Staff History</span>
+            </a>
+            <a href="stories.html" class="link-row">
+              <span style="width:8px;height:8px;border-radius:50%;background:#C0182A;flex-shrink:0;"></span>
+              <span style="font-size:0.875rem;font-weight:500;color:#334155;">Athlete Stories &amp; Features</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Championships CTA -->
+        <div>
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+            <div style="width:4px;height:32px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.02em;margin:0;">Championships</h2>
+          </div>
+          <div style="border-radius:0.875rem;padding:2rem;background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 100%);box-shadow:0 6px 28px rgba(27,42,94,0.28);position:relative;overflow:hidden;">
+            <div style="position:absolute;top:-20px;right:-20px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.18) 0%,transparent 70%);pointer-events:none;"></div>
+            <img src="brand_assets/TW_TF_Color on Blue Vert@3x.png" alt="TWHS Cardinals" style="height:72px;width:auto;margin-bottom:1.1rem;opacity:0.92;position:relative;z-index:1;" />
+            <p style="color:#CBD5E1;font-size:0.875rem;line-height:1.78;margin-bottom:1.5rem;position:relative;z-index:1;">
+              The Cardinals have competed at the highest levels of High School competition. Explore the full record of district titles, regional qualifiers, and state championships earned by TWHS athletes.
+            </p>
+            <a href="championships.html" class="cta-btn" style="position:relative;z-index:1;">
+              View Championships
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke-width:2.5;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Feature Cards Carousel (infinite loop) ──
+    (function () {
+      const track    = document.getElementById('fc-track');
+      const viewport = document.getElementById('fc-viewport');
+      const dots     = document.querySelectorAll('.fc-dot');
+      const TOTAL    = 4;
+      let busy   = false;
+      let timer  = null;
+      let touchX = null;
+
+      // Bookend clones: prepend clone of last slide, append clone of first slide.
+      // Extended track: [clone-last | slide0 | slide1 | slide2 | slide3 | clone-first]
+      // Real slides sit at positions 1–4; we start at pos=1.
+      const origSlides = Array.from(track.children);
+      track.prepend(origSlides[TOTAL - 1].cloneNode(true));
+      track.appendChild(origSlides[0].cloneNode(true));
+
+      let pos    = 1;  // position in the extended track
+      let dotIdx = 0;  // which real dot is active
+
+      // Place track silently at starting position
+      track.style.transition = 'none';
+      track.style.transform  = 'translateX(-100%)';
+
+      function updateDots(i) { dots.forEach((d, j) => d.classList.toggle('active', j === i)); }
+
+      function slideTo(newPos, newDot) {
+        if (busy) return;
+        busy   = true;
+        pos    = newPos;
+        dotIdx = newDot;
+        track.style.transition = 'transform 0.55s cubic-bezier(0.4,0,0.2,1)';
+        track.style.transform  = 'translateX(-' + (pos * 100) + '%)';
+        updateDots(dotIdx);
+        resetTimer();
+      }
+
+      function advance(dir) {
+        const newPos = pos + dir;
+        const newDot = ((dotIdx + dir) % TOTAL + TOTAL) % TOTAL;
+        slideTo(newPos, newDot);
+      }
+
+      // After a transition, silently snap clones → real counterparts
+      track.addEventListener('transitionend', e => {
+        if (e.propertyName !== 'transform') return;
+        busy = false;
+        if (pos === 0) {            // landed on clone-of-last → jump to real last
+          track.style.transition = 'none';
+          pos = TOTAL;
+          track.style.transform  = 'translateX(-' + (pos * 100) + '%)';
+        } else if (pos === TOTAL + 1) { // landed on clone-of-first → jump to real first
+          track.style.transition = 'none';
+          pos = 1;
+          track.style.transform  = 'translateX(-' + (pos * 100) + '%)';
+        }
+      });
+
+      function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(() => advance(1), 5000);
+      }
+
+      document.getElementById('fc-prev').addEventListener('click', e => { e.preventDefault(); advance(-1); });
+      document.getElementById('fc-next').addEventListener('click', e => { e.preventDefault(); advance(1); });
+      dots.forEach(d => d.addEventListener('click', () => {
+        const target = +d.dataset.fcIdx;
+        if (target === dotIdx) return;
+        slideTo(pos + (target - dotIdx), target);
+      }));
+
+      viewport.addEventListener('mouseenter', () => clearInterval(timer));
+      viewport.addEventListener('mouseleave', resetTimer);
+
+      viewport.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+      viewport.addEventListener('touchend', e => {
+        if (touchX === null) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 44) advance(dx < 0 ? 1 : -1);
+        touchX = null;
+      });
+
+      updateDots(0);
+      resetTimer();
+    })();
+  </script>
+</body>
+</html>

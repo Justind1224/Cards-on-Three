@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Records — TWHS Track &amp; Field</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* ── Nav underline animation ── */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Category tab buttons ── */
+    .tab-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid #D1D5DB;
+      background: #fff;
+      color: #475569;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+                  transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+    }
+    .tab-btn:hover { border-color: #C0182A; color: #C0182A; box-shadow: 0 2px 8px rgba(192,24,42,0.12); }
+    .tab-btn:active { transform: scale(0.97); }
+    .tab-btn:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; }
+    .tab-btn.active {
+      background: #C0182A; border-color: #C0182A; color: #fff;
+      box-shadow: 0 3px 10px rgba(192,24,42,0.35);
+    }
+
+    /* ── Category sections ── */
+    .category-section { display: none; }
+    .category-section.active { display: block; }
+
+    /* ── Record card ── */
+    .record-card {
+      display: grid;
+      grid-template-columns: 140px 1fr 280px;
+      border-left: 4px solid #C0182A;
+      border-radius: 0 0.875rem 0.875rem 0;
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(27,42,94,0.07), 0 6px 28px rgba(27,42,94,0.04);
+      overflow: visible;
+      margin-bottom: 1.75rem;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .record-card:hover {
+      box-shadow: 0 4px 20px rgba(27,42,94,0.10), 0 8px 32px rgba(27,42,94,0.06), 0 0 0 3px rgba(212,175,55,0.35), 0 0 44px 10px rgba(212,175,55,0.22);
+      transform: translateY(-1px);
+    }
+
+    /* Photo column */
+    .photo-col {
+      background: #F1F5F9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.25rem;
+      border-right: 1px solid #E8ECF2;
+      gap: 0.625rem;
+      position: relative;
+      z-index: 2;
+    }
+    .photo-col img {
+      width: 96px;
+      height: 124px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      box-shadow: 0 3px 10px rgba(27,42,94,0.18);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, filter 0.25s ease;
+      position: relative;
+      z-index: 2;
+    }
+    .record-card:hover .photo-col img {
+      transform: scale(1.35);
+      box-shadow: 0 16px 40px rgba(27,42,94,0.32), 0 4px 16px rgba(27,42,94,0.22);
+      filter: brightness(1.06);
+    }
+    .gender-tag {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.4;
+      color: #fff;
+      padding: 0.15rem 0.5rem;
+      border-radius: 0.25rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      z-index: 3;
+    }
+    .gender-tag-boys {
+      background: linear-gradient(155deg, #33488E 0%, #1B2A5E 100%);
+      box-shadow: 0 3px 8px rgba(5,9,26,0.5), 0 1px 3px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18);
+    }
+    .gender-tag-girls {
+      background: linear-gradient(155deg, #DE3350 0%, #C0182A 100%);
+      box-shadow: 0 3px 8px rgba(70,8,15,0.5), 0 1px 3px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18);
+    }
+    .photo-hint {
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94A3B8;
+      text-align: center;
+    }
+
+    /* Stats column */
+    .stats-col {
+      padding: 1.625rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+    }
+    .record-mark {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #C0182A;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .athlete-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1B2A5E;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.625rem;
+    }
+    .athlete-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+    }
+    .chip {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: #64748B;
+      background: #F1F5F9;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+      border: 1px solid #E2E8F0;
+    }
+
+    /* Blurb column */
+    .blurb-col {
+      background: linear-gradient(135deg, #F8F9FB 0%, #EEF2FF 100%);
+      border-left: 1px solid #E2E8F0;
+      border-radius: 0 0.875rem 0.875rem 0;
+      overflow: hidden;
+      padding: 1.625rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .blurb-label {
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #94A3B8;
+    }
+    .blurb-text {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: #475569;
+      font-style: italic;
+      margin: 0;
+    }
+
+    /* ── Event section headers ── */
+    .event-header {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    .event-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: #1B2A5E;
+      letter-spacing: -0.02em;
+    }
+    .record-badge {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #C0182A;
+      background: rgba(192,24,42,0.08);
+      border: 1px solid rgba(192,24,42,0.2);
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    /* ── Boys/girls pairing ── */
+    .record-pair {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+      margin-bottom: 1.75rem;
+    }
+    .record-pair .record-card { margin-bottom: 0; }
+    .record-card[data-gender="boys"] { border-left-color: #1B2A5E; }
+    .record-card[data-gender="girls"] { border-left-color: #C0182A; }
+
+    /* ── Dividers between events ── */
+    .event-divider {
+      height: 1px;
+      background: linear-gradient(90deg, #C0182A22, #E2E8F0, transparent);
+      margin: 2.25rem 0;
+    }
+
+    /* ── Footer link ── */
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    /* ── Grain texture ── */
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:76px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:0.75rem;text-decoration:none;flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:56px;width:auto;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+      </a>
+      <nav style="display:flex;align-items:center;gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#fff;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Stories</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem;border-radius:0.375rem;background:#C0182A;color:#fff;font-size:0.875rem;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(192,24,42,0.35);">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Page Hero Banner ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 60%,#243575 100%);position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3rem 1.5rem 2.75rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <a href="index.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <span style="color:#475569;font-size:0.8125rem;">›</span>
+        <span style="color:#CBD5E1;font-size:0.8125rem;">Records</span>
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.75rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;">
+        School Records
+      </h1>
+      <p style="color:#94A3B8;font-size:0.9375rem;line-height:1.7;max-width:560px;">
+        The all-time school records for TWHS Track &amp; Field — the marks that define Cardinal excellence across every event.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Main Content ── -->
+  <main style="max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem 4rem;">
+  <div style="display:grid;grid-template-columns:230px 1fr;gap:2rem;align-items:start;">
+
+    <!-- ── Left Sidebar ── -->
+    <aside>
+      <div style="background:#fff;border-radius:0.875rem;overflow:hidden;box-shadow:0 2px 12px rgba(27,42,94,0.08),0 6px 24px rgba(27,42,94,0.05);">
+        <div style="height:4px;background:linear-gradient(90deg,#C0182A,#9E1322);"></div>
+        <!-- Trigger row — always visible -->
+        <button id="sidebar-trigger"
+          onclick="(function(){var b=document.getElementById('sidebar-body');var c=document.getElementById('sidebar-chevron');var open=b.style.maxHeight&&b.style.maxHeight!=='0px';b.style.maxHeight=open?'0px':'360px';c.style.transform=open?'rotate(0deg)':'rotate(180deg)';})()"
+          style="width:100%;display:flex;align-items:center;gap:0.875rem;padding:1.125rem 1.25rem;background:none;border:none;cursor:pointer;text-align:left;">
+          <div style="width:40px;height:40px;flex-shrink:0;border-radius:0.5rem;background:rgba(192,24,42,0.08);border:1px solid rgba(192,24,42,0.15);display:flex;align-items:center;justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C0182A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+          <span style="font-size:0.8125rem;font-weight:600;color:#1B2A5E;flex:1;">Submit a Photo</span>
+          <svg id="sidebar-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;transition:transform 0.3s ease;">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <!-- Collapsible body -->
+        <div id="sidebar-body" style="max-height:0;overflow:hidden;transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1);">
+          <div style="padding:0 1.25rem 1.25rem;">
+            <p style="font-size:0.8125rem;color:#64748B;line-height:1.65;margin-bottom:1.125rem;">Have a photo of a record holder? Submit it and we'll display it alongside their record.</p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor"
+               target="_blank" rel="noopener"
+               style="display:flex;align-items:center;justify-content:center;gap:0.5rem;width:100%;padding:0.625rem 1rem;background:#C0182A;color:#fff;font-size:0.8125rem;font-weight:600;text-decoration:none;border-radius:0.375rem;box-shadow:0 2px 8px rgba(192,24,42,0.35);transition:background 0.15s ease,box-shadow 0.15s ease;"
+               onmouseover="this.style.background='#9E1322';this.style.boxShadow='0 3px 12px rgba(192,24,42,0.45)'"
+               onmouseout="this.style.background='#C0182A';this.style.boxShadow='0 2px 8px rgba(192,24,42,0.35)'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Open Submission Form
+            </a>
+          </div>
+          <div style="padding:0.75rem 1.25rem;background:#F8F9FB;border-top:1px solid #EEF0F5;">
+            <p style="font-size:0.6875rem;color:#94A3B8;line-height:1.6;margin:0;">Photos will be reviewed before being added to the page.</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Records Content ── -->
+    <div>
+
+    <!-- Category Tabs -->
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:2.5rem;padding-bottom:1.75rem;border-bottom:1px solid #E2E8F0;">
+      <button class="tab-btn active" data-category="sprints">Sprints</button>
+      <button class="tab-btn" data-category="distance">Distance</button>
+      <button class="tab-btn" data-category="hurdles">Hurdles</button>
+      <button class="tab-btn" data-category="relays">Relays</button>
+      <button class="tab-btn" data-category="field">Field Events</button>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SPRINTS
+    ══════════════════════════════════════ -->
+    <div class="category-section active" data-category="sprints">
+
+      <!-- 100 Meter Dash -->
+      <div class="event-header">
+        <span class="event-title">100 Meter Dash</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">10.65</div>
+          <div class="athlete-name">Kainnan Ramsey</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">OCCs at Dublin Coffman</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">12.15</div>
+          <div class="athlete-name">T'Nita Waters</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2000</span>
+            <span class="chip">State Championship, Dayton (SF)</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 200 Meter Dash -->
+      <div class="event-header">
+        <span class="event-title">200 Meter Dash</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">21.32</div>
+          <div class="athlete-name">Shannon Wheatley</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1999</span>
+            <span class="chip">Regional at Dublin Coffman</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">24.88</div>
+          <div class="athlete-name">Molly Beckwith</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2002</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 400 Meter Dash -->
+      <div class="event-header">
+        <span class="event-title">400 Meter Dash</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">46.76</div>
+          <div class="athlete-name">Justin Braun</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2019</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">55.32</div>
+          <div class="athlete-name">Jazzlynn Gaiters</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2015</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+    </div><!-- /sprints -->
+
+    <!-- ══════════════════════════════════════
+         DISTANCE
+    ══════════════════════════════════════ -->
+    <div class="category-section" data-category="distance">
+
+      <!-- 800 Meter Run -->
+      <div class="event-header">
+        <span class="event-title">800 Meter Run</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">1:53.73</div>
+          <div class="athlete-name">Arjun Jha</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2018</span>
+            <span class="chip">Regional at Pickerington North</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">2:07.47</div>
+          <div class="athlete-name">Gia Napoleon</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 1600 Meter Run -->
+      <div class="event-header">
+        <span class="event-title">1600 Meter Run</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">4:09.09</div>
+          <div class="athlete-name">Arjun Jha</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">4:55.46</div>
+          <div class="athlete-name">Gia Napoleon</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2019</span>
+            <span class="chip">Ohio Capital Conference  at Hilliard Davidson</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 3200 Meter Run -->
+      <div class="event-header">
+        <span class="event-title">3200 Meter Run</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">9:10.07</div>
+          <div class="athlete-name">Andy Payne</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2018</span>
+            <span class="chip">Gary Smith Invitational</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">10:41.92</div>
+          <div class="athlete-name">Emily Hood</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1993</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 2000 Meter Steeplechase -->
+      <div class="event-header">
+        <span class="event-title">2000 Meter Steeplechase</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">6:39.66</div>
+          <div class="athlete-name">Jack Sutherland</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1997</span>
+            <span class="chip">Footlocker National Championship</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+    </div><!-- /distance -->
+
+    <!-- ══════════════════════════════════════
+         HURDLES
+    ══════════════════════════════════════ -->
+    <div class="category-section" data-category="hurdles">
+
+      <!-- High Hurdles -->
+      <div class="event-header">
+        <span class="event-title">High Hurdles</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">13.90</div>
+          <div class="athlete-name">Justin Williams</div>
+          <div class="athlete-chips">
+            <span class="chip">110m Hurdles</span>
+            <span class="chip">Spring 1998</span>
+            <span class="chip">Worthington Invitational*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">15.06</div>
+          <div class="athlete-name">Kristie Ford</div>
+          <div class="athlete-chips">
+            <span class="chip">100m Hurdles</span>
+            <span class="chip">Spring 1996</span>
+            <span class="chip">Comet Relays at Amherst</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 300 Meter Intermediate Hurdles -->
+      <div class="event-header">
+        <span class="event-title">300 Meter Intermediate Hurdles</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">37.62</div>
+          <div class="athlete-name">Tim Kight</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1971</span>
+            <span class="chip">All American National HS Championships in Chicago*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">43.43</div>
+          <div class="athlete-name">Kristyn Moss</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1998</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 180 Yard Hurdles -->
+      <div class="event-header">
+        <span class="event-title">180 Yard Hurdles</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">19.30</div>
+          <div class="athlete-name">Tim Kight</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1971</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 220 Yard Hurdles -->
+      <div class="event-header">
+        <span class="event-title">220 Yard Hurdles</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">26.50</div>
+          <div class="athlete-name">Bud Kessler</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1943</span>
+            <span class="chip">County Track Meet at Ohio Stadium</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 80 Yard Hurdles -->
+      <div class="event-header">
+        <span class="event-title">80 Yard Hurdles</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No boys record currently on file for this event.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">11.80</div>
+          <div class="athlete-name">Janet Maharis</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1976</span>
+            <span class="chip">Worthington vs. Upper Arlington</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+    </div><!-- /hurdles -->
+
+    <!-- ══════════════════════════════════════
+         RELAYS
+    ══════════════════════════════════════ -->
+    <div class="category-section" data-category="relays">
+
+      <!-- 4 × 100 Meter Relay -->
+      <div class="event-header">
+        <span class="event-title">4 × 100 Meter Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">41.93</div>
+          <div class="athlete-name">4 × 100 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2012</span>
+            <span class="chip">Regional at Pickerington North</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Kevin Girgis, Armand Austin, Nana Kyermeh, Jalen Wells</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">48.74</div>
+          <div class="athlete-name">4 × 100 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2025</span>
+            <span class="chip">State Championship, Columbus (SF)</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Campbell Boone, Hope Adams, Kalashia Lees, TyEisha Perkins</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 4 × 200 Meter Relay -->
+      <div class="event-header">
+        <span class="event-title">4 × 200 Meter Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">1:26.88</div>
+          <div class="athlete-name">4 × 200 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2012</span>
+            <span class="chip">Regional At Pickerington North</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Kevin Girgis, Andrew Maetzold, Armand Austin, Nana Kyermeh</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">1:40.44</div>
+          <div class="athlete-name">4 × 200 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2005</span>
+            <span class="chip">Regional at Hilliard Davidson</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Abby Kostecka, Molly Beckwith, Joy Peterson, Aricka Rhodes</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 4 × 400 Meter Relay -->
+      <div class="event-header">
+        <span class="event-title">4 × 400 Meter Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">3:14.49</div>
+          <div class="athlete-name">4 × 400 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1997</span>
+            <span class="chip">National Scholastic Outdoor Championships, Raleigh</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Shannon Wheatley, Jeff Kieselbach, J.R. Niklos, Adrian Wheatley</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">3:48.82</div>
+          <div class="athlete-name">4 × 400 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2018</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Gia Napoleon, Carina Napoleon, Allyicia Diggs-Hall, Jazzlynn Gaiters</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 4 × 800 Meter Relay -->
+      <div class="event-header">
+        <span class="event-title">4 × 800 Meter Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">7:39.86</div>
+          <div class="athlete-name">4 × 800 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Ty Banks, Joshua Allen, Andrew Morgan, Arjun Jha</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">8:55.85</div>
+          <div class="athlete-name">4 × 800 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2019</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Lydia Miller, Morgan Edwards, Carina Napoleon, Gia Napoleon</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 4 × 1600 Meter Relay -->
+      <div class="event-header">
+        <span class="event-title">4 × 1600 Meter Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">17:38.06</div>
+          <div class="athlete-name">4 × 1600 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1968</span>
+            <span class="chip">Fulton Relays at Lancaster*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Randy Chadwell, Bill Ingram, Ralph Lowery, Jim Wilson</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">21:18.52</div>
+          <div class="athlete-name">4 × 1600 Meter Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">Edwin Moses Relays, Dayton</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Gia Napoleon, Hannah Moulton, Cassidy Shaver, Christina Nash</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Distance Medley Relay -->
+      <div class="event-header">
+        <span class="event-title">Distance Medley Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">10:26.54</div>
+          <div class="athlete-name">Distance Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">Stingel Invitational at Pickerington North</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Andrew Morgan, Joshua Allen, Ty Banks, Arjun Jha</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">12:25.26</div>
+          <div class="athlete-name">Distance Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2019</span>
+            <span class="chip">Stingel Invitational at Pickerington North</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Gia Napoleon, Cassidy Shaver, Lydia Miller, Carina Napoleon</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Distance Medley Relay (3k) -->
+      <div class="event-header">
+        <span class="event-title">Distance Medley Relay (3k)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">7:44.10</div>
+          <div class="athlete-name">Distance Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1967</span>
+            <span class="chip">Bellaire Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Steve Romohr, Jim Wilson, Ralph Lowery, John Titus</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Shuttle Hurdle Relay -->
+      <div class="event-header">
+        <span class="event-title">Shuttle Hurdle Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">57.68</div>
+          <div class="athlete-name">Shuttle Hurdle Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1969</span>
+            <span class="chip">Fulton Relays at Lancaster*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Dan O'Rourke, Doug Blackburn, Mark Denbow, Tim Kight</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">1:03.94</div>
+          <div class="athlete-name">Shuttle Hurdle Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1992</span>
+            <span class="chip">Trotwood-Madison Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Team roster not recorded for this performance.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Sprint Medley Relay (800m) -->
+      <div class="event-header">
+        <span class="event-title">Sprint Medley Relay (800m)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">1:32.44</div>
+          <div class="athlete-name">Sprint Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1997</span>
+            <span class="chip">Fulton Relays at Lancaster*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Ryan Gray, Brian Ford, Jeff Kieselbach, J.R. Niklos</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">1:50.62</div>
+          <div class="athlete-name">Sprint Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2002</span>
+            <span class="chip">Fulton Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Lauren Cassady, Erin Isler, Molly Beckwith, Jennifer Beckwith</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Sprint Medley Relay (1600m) -->
+      <div class="event-header">
+        <span class="event-title">Sprint Medley Relay (1600m)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">3:29.64</div>
+          <div class="athlete-name">Sprint Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1975</span>
+            <span class="chip">Upper Arlington Relays*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Team roster not recorded for this performance.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 1600 Meter Medley Relay -->
+      <div class="event-header">
+        <span class="event-title">1600 Meter Medley Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">3:48.34</div>
+          <div class="athlete-name">1600 Meter Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1983</span>
+            <span class="chip">Worthington Relays*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Team roster not recorded for this performance.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">4:09.00</div>
+          <div class="athlete-name">1600 Meter Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2006</span>
+            <span class="chip">Trotwood Madison Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Aricka Rhodes, Joy Peterson, Taya Lichtenberg, Christine Barren</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Middle Distance Medley Relay -->
+      <div class="event-header">
+        <span class="event-title">Middle Distance Medley Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">5:45.64</div>
+          <div class="athlete-name">Middle Distance Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2026</span>
+            <span class="chip">Fulton Relays at Lancaster</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Jonah Hein, Jim Tincher, Sadat Khan, Wesley Nash</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">7:10.84</div>
+          <div class="athlete-name">Middle Distance Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1998</span>
+            <span class="chip">Fulton Relays at Lancaster*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Katharine Smith, Leah Burnett, Sarah Rantz, Evie Scholl</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 4 × 300 Meter Hurdle Relay -->
+      <div class="event-header">
+        <span class="event-title">4 × 300 Meter Hurdle Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">2:56.24</div>
+          <div class="athlete-name">4 × 300 Meter Hurdle Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2003</span>
+            <span class="chip">Elk Relays at Centerville*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Mark Kwiatkowski, Alex Bodiford, Mike Nyiradi, Sterling Roberts</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 1200 Meter Shuttle Hurdle Relay -->
+      <div class="event-header">
+        <span class="event-title">1200 Meter Shuttle Hurdle Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No boys record currently on file for this event.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">3:24.34</div>
+          <div class="athlete-name">1200 Meter Shuttle Hurdle Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1989</span>
+            <span class="chip">Lakota Relays*</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Robyn Keselring, Alison Lowe, Beth Provanzana, Heather Gammel</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Swedish Relay -->
+      <div class="event-header">
+        <span class="event-title">Swedish Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">2:06.36</div>
+          <div class="athlete-name">Swedish Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2026</span>
+            <span class="chip">Big Walnut Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Cornelious Harris, Lius Singletary, Sadat Khan, Jonah Hein</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Mixed Gender Distance Medley Relay -->
+      <div class="event-header">
+        <span class="event-title">Mixed Gender Distance Medley Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">12:31.14</div>
+          <div class="athlete-name">Mixed Gender Distance Medley Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Mixed Team</span>
+            <span class="chip">Spring 2025</span>
+            <span class="chip">Stingel Invitational at Pickerington North</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Reese Watson, Corinne Liska, Gabe Coble, Eli Seed</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- 8 Mile Relay -->
+      <div class="event-header">
+        <span class="event-title">8 Mile Relay</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">41:24.10</div>
+          <div class="athlete-name">8 Mile Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1980</span>
+            <span class="chip">Upper Arlington Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">McGrager, Perkins, Marosek, Miller</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+    </div><!-- /relays -->
+
+    <!-- ══════════════════════════════════════
+         FIELD EVENTS
+    ══════════════════════════════════════ -->
+    <div class="category-section" data-category="field">
+
+      <!-- Long Jump -->
+      <div class="event-header">
+        <span class="event-title">Long Jump</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">23' 4.5"</div>
+          <div class="athlete-name">Malyk Burks</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2014</span>
+            <span class="chip">District at Hilliard Darby</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">18' 7.25"</div>
+          <div class="athlete-name">Chaneya Garner</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2023</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Triple Jump -->
+      <div class="event-header">
+        <span class="event-title">Triple Jump</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">42' 7"</div>
+          <div class="athlete-name">Jason Baty</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2014</span>
+            <span class="chip">Gary Smith Invitational</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">30' 5"</div>
+          <div class="athlete-name">Maya Burns</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2014</span>
+            <span class="chip">Gary Smith Invitational</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- High Jump -->
+      <div class="event-header">
+        <span class="event-title">High Jump</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">7' 0"</div>
+          <div class="athlete-name">Tom Lange</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1988</span>
+            <span class="chip">State Championship,  Colum bus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">5' 8"</div>
+          <div class="athlete-name">Laurie Arsenault</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1981</span>
+            <span class="chip">OHSAA State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Shot Put -->
+      <div class="event-header">
+        <span class="event-title">Shot Put</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">55' 9"</div>
+          <div class="athlete-name">Cade Richeson</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">Hilliard Darby</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">39' 2.5"</div>
+          <div class="athlete-name">Sara Wilson</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1984</span>
+            <span class="chip">State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Discus -->
+      <div class="event-header">
+        <span class="event-title">Discus</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">176' 0"</div>
+          <div class="athlete-name">Paul Linder</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1984</span>
+            <span class="chip">OHSAA State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">127' 10"</div>
+          <div class="athlete-name">Missy Novak</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1995</span>
+            <span class="chip">Track Honor Roll 5.13.95</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Pole Vault -->
+      <div class="event-header">
+        <span class="event-title">Pole Vault</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">16' 8"</div>
+          <div class="athlete-name">Luka Srsic</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2021</span>
+            <span class="chip">Regional at Pickerington North</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">12' 4"</div>
+          <div class="athlete-name">Ally Wood</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2009</span>
+            <span class="chip">OHSAA State Championship, Columbus</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Standing Broad Jump -->
+      <div class="event-header">
+        <span class="event-title">Standing Broad Jump</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">9' 5"</div>
+          <div class="athlete-name">Raymond Kuhns</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1924</span>
+            <span class="chip">Franklin County  Meet at Westerville</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Javelin Throw -->
+      <div class="event-header">
+        <span class="event-title">Javelin Throw</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">137 '6"</div>
+          <div class="athlete-name">N. Brown</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1935</span>
+            <span class="chip">Worthington @ Arlington</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Hammer Throw -->
+      <div class="event-header">
+        <span class="event-title">Hammer Throw</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">84' 4"</div>
+          <div class="athlete-name">Steve Franchini</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2003</span>
+            <span class="chip">Elk Relays at Centerville</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">152' 1"</div>
+          <div class="athlete-name">Jenna Olsen</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2025</span>
+            <span class="chip">Ohio High School Hammer Chammpionship at Ohio State</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Baseball Throw -->
+      <div class="event-header">
+        <span class="event-title">Baseball Throw</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Photo" alt="Record Holder Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">232' 0"</div>
+          <div class="athlete-name">Everett McGuire</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1925</span>
+            <span class="chip">Franklin County Meet</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">About the Record</div>
+          <p class="blurb-text">No further description of this record is available at this time.</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Pole Vault Relay (2-Man) -->
+      <div class="event-header">
+        <span class="event-title">Pole Vault Relay (2-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">25' 6"</div>
+          <div class="athlete-name">Pole Vault Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1993</span>
+            <span class="chip">Trotwood Madison Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Fred Gilbert, Tom Sagle</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">19' 3"</div>
+          <div class="athlete-name">Pole Vault Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2008</span>
+            <span class="chip">Ranger Relays at Eastlake</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Allie Wood, Calli Cautella</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Pole Vault Relay (3-Man) -->
+      <div class="event-header">
+        <span class="event-title">Pole Vault Relay (3-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">35' 0"</div>
+          <div class="athlete-name">Pole Vault Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1975</span>
+            <span class="chip">Upper Arlington Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Mike Fallon, Scott McFerrin, Jeff Denbow</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/E2E8F0/94A3B8?text=%E2%80%94" alt="No record on file" />
+          <span class="photo-hint">No record on file</span>
+        </div>
+        <div class="stats-col">
+          <div class="record-mark" style="color:#CBD5E1;">&mdash;</div>
+          <div class="athlete-name" style="color:#94A3B8;">No Record on File</div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Status</div>
+          <p class="blurb-text">No girls record currently on file for this event.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Long Jump Relay (2-Man) -->
+      <div class="event-header">
+        <span class="event-title">Long Jump Relay (2-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">39' 5.5"</div>
+          <div class="athlete-name">Long Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1996</span>
+            <span class="chip">Trotwood Madison Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Nate Wasson, Justin Williams</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">32' 5.75"</div>
+          <div class="athlete-name">Long Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2017</span>
+            <span class="chip">Edwin Moses Relays at Dayton</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Sarah Charley, Kiara Coleman</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Long Jump Relay (3-Man) -->
+      <div class="event-header">
+        <span class="event-title">Long Jump Relay (3-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">61' 10.25"</div>
+          <div class="athlete-name">Long Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2014</span>
+            <span class="chip">Amherst Comet Reays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Malyk Burks, Jason Baty, Mike Wood</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">45' 6.25"</div>
+          <div class="athlete-name">Long Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1991</span>
+            <span class="chip">Willoughby South Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Robyn Keselring, Angel Nooks, Lucretia Simmons</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Shot Put Relay (2-Man) -->
+      <div class="event-header">
+        <span class="event-title">Shot Put Relay (2-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">91' 10"</div>
+          <div class="athlete-name">Shot Put Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1993</span>
+            <span class="chip">Fulton Relays at Lancaster</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Steve Patton, Zack Cline</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">68' 4"</div>
+          <div class="athlete-name">Shot Put Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1995</span>
+            <span class="chip">Fulton Relays at Lancaster</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Elizabeth Hellickson, Melissa Novak</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Shot Put Relay (3-Man) -->
+      <div class="event-header">
+        <span class="event-title">Shot Put Relay (3-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">134' 9.5"</div>
+          <div class="athlete-name">Shot Put Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1992</span>
+            <span class="chip">Willoughby Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Qwann Wood, Zach Cline, Steve Patton</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">88' 6"</div>
+          <div class="athlete-name">Shot Put Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2013</span>
+            <span class="chip">Comet Relays at Amherst Steele</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Cassandra Laios, Mimi Gupta, Diana Sumano</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Discus Relay (2-Man) -->
+      <div class="event-header">
+        <span class="event-title">Discus Relay (2-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">293' 0"</div>
+          <div class="athlete-name">Discus Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1992</span>
+            <span class="chip">Fulton Relays at Lancaster</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Qwann Wood, Steve Patton</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">229' 0"</div>
+          <div class="athlete-name">Discus Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2009</span>
+            <span class="chip">Ranger Relays at Eastlake</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Jamie Meegan, Sarah Burkett</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- Discus Relay (3-Man) -->
+      <div class="event-header">
+        <span class="event-title">Discus Relay (3-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">437' 3"</div>
+          <div class="athlete-name">Discus Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1965</span>
+            <span class="chip">Fulton Relays at Lancaster</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Bob Klosterman, Dean  Blackstone, Bill Russell</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">251' 8"</div>
+          <div class="athlete-name">Discus Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2013</span>
+            <span class="chip">Comet Relays at Amherst Steele</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Cassandra Laios, Mimi Gupta, Rina Laios</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- High Jump Relay (2-Man) -->
+      <div class="event-header">
+        <span class="event-title">High Jump Relay (2-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">12' 10.25"</div>
+          <div class="athlete-name">High Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1987</span>
+            <span class="chip">Fulton Relays at Lancaster</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Tom Lange, John Crotty</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">9' 10"</div>
+          <div class="athlete-name">High Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1998</span>
+            <span class="chip">Fulton Relays at Lancaster</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Team roster not recorded for this performance.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="event-divider"></div>
+
+      <!-- High Jump Relay (3-Man) -->
+      <div class="event-header">
+        <span class="event-title">High Jump Relay (3-Man)</span>
+        <span class="record-badge">School Record</span>
+      </div>
+      <div class="record-pair">
+      <div class="record-card" data-gender="boys">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-boys">Boys</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">17' 11"</div>
+          <div class="athlete-name">High Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 2014</span>
+            <span class="chip">Amherst Comet Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Mike Wood, Nick Fraley, Jay Kirwan</p>
+        </div>
+      </div>
+      <div class="record-card" data-gender="girls">
+        <div class="photo-col">
+          <span class="gender-tag gender-tag-girls">Girls</span>
+          <img src="https://placehold.co/96x124/1B2A5E/ffffff?text=Team+Photo" alt="Relay Team Photo" />
+        </div>
+        <div class="stats-col">
+          <div class="record-mark">14' 6"</div>
+          <div class="athlete-name">High Jump Relay Team</div>
+          <div class="athlete-chips">
+            <span class="chip">Spring 1991</span>
+            <span class="chip">Willoughby South Relays</span>
+          </div>
+        </div>
+        <div class="blurb-col">
+          <div class="blurb-label">Team Members</div>
+          <p class="blurb-text">Paige Renske, Robyn Keselring, Karen Boerger</p>
+        </div>
+      </div>
+      </div>
+    </div><!-- /field -->
+
+
+
+
+
+
+
+
+    </div><!-- /records content -->
+  </div><!-- /grid -->
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Category tabs ──
+    document.querySelectorAll('.tab-btn[data-category]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn[data-category]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.category-section').forEach(sec => {
+          sec.classList.toggle('active', sec.dataset.category === btn.dataset.category);
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

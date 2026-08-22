@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>All-Time List — TWHS Track &amp; Field</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* ── Nav underline animation ── */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Category tab buttons ── */
+    .tab-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid #D1D5DB;
+      background: #fff;
+      color: #475569;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s ease;
+    }
+    .tab-btn:hover {
+      border-color: #C0182A;
+      color: #C0182A;
+      box-shadow: 0 2px 8px rgba(192,24,42,0.12);
+    }
+    .tab-btn:active { transform: scale(0.97); }
+    .tab-btn:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; }
+    .tab-btn.active {
+      background: #C0182A;
+      border-color: #C0182A;
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(192,24,42,0.35);
+    }
+
+    /* ── Gender toggle switch ── */
+    .gender-toggle {
+      position: relative;
+      display: inline-flex;
+      background: #E2E8F0;
+      border-radius: 9999px;
+      padding: 4px;
+      width: 232px;
+      height: 46px;
+    }
+    .gender-toggle-thumb {
+      position: absolute;
+      top: 4px; left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      border-radius: 9999px;
+      background: #1B2A5E;
+      box-shadow: 0 3px 10px rgba(27,42,94,0.35);
+      transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1), background 0.32s ease, box-shadow 0.32s ease;
+      z-index: 1;
+    }
+    .gender-toggle.girls .gender-toggle-thumb {
+      transform: translateX(100%);
+      background: #C0182A;
+      box-shadow: 0 3px 10px rgba(192,24,42,0.35);
+    }
+    .gender-toggle-option {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      border: none;
+      background: transparent;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #64748B;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .gender-toggle-option:active { transform: scale(0.96); }
+    .gender-toggle-option:focus-visible { outline: 2px solid #1B2A5E; outline-offset: 2px; }
+    .gender-toggle-option.active { color: #fff; }
+
+    /* ── Event buttons (smaller, secondary style) ── */
+    #event-buttons-container .tab-btn {
+      font-size: 0.8125rem;
+      padding: 0.375rem 0.875rem;
+      border-color: #E2E8F0;
+      background: #fff;
+      color: #334155;
+      box-shadow: 0 1px 3px rgba(27,42,94,0.07);
+    }
+    #event-buttons-container .tab-btn:hover {
+      border-color: #1B2A5E;
+      color: #1B2A5E;
+      box-shadow: 0 2px 8px rgba(27,42,94,0.12);
+    }
+    #event-buttons-container .tab-btn.active {
+      background: #1B2A5E;
+      border-color: #1B2A5E;
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(27,42,94,0.3);
+    }
+
+    /* ── DataTables overrides ── */
+    .dataTables_wrapper {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.875rem;
+    }
+    .dataTables_wrapper .dataTables_length select {
+      border: 1.5px solid #E2E8F0;
+      border-radius: 0.375rem;
+      padding: 0.35rem 0.6rem;
+      color: #334155;
+      font-size: 0.8125rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .dataTables_wrapper .dataTables_length select:focus {
+      border-color: #C0182A;
+    }
+    .dataTables_wrapper .dataTables_filter label,
+    .dataTables_wrapper .dataTables_length label,
+    .dataTables_wrapper .dataTables_info {
+      color: #64748B;
+      font-size: 0.8125rem;
+    }
+    .dataTables_wrapper .dataTables_filter input {
+      border: 2px solid #94A3B8;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1rem;
+      color: #1E293B;
+      font-size: 0.9375rem;
+      font-family: 'Inter', system-ui, sans-serif;
+      min-width: 260px;
+      background: #fff;
+      box-shadow: 0 1px 6px rgba(27,42,94,0.1), 0 3px 12px rgba(27,42,94,0.06);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dataTables_wrapper .dataTables_filter input:focus {
+      border-color: #C0182A;
+      box-shadow: 0 0 0 3px rgba(192,24,42,0.12), 0 2px 8px rgba(27,42,94,0.1);
+    }
+    .dataTables_wrapper .dataTables_filter input::placeholder {
+      color: #94A3B8;
+    }
+    table.dataTable thead th {
+      background: #1B2A5E;
+      color: #fff;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-bottom: none !important;
+      padding: 0.875rem 1rem;
+    }
+    table.dataTable thead th.sorting::after,
+    table.dataTable thead th.sorting_asc::after,
+    table.dataTable thead th.sorting_desc::after { opacity: 0.6; }
+    table.dataTable tbody tr td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #EEF0F5;
+      color: #334155;
+    }
+    table.dataTable tbody tr:hover td { background: #F0F4FF; }
+    table.dataTable tbody tr:nth-child(even) td { background: #F8F9FB; }
+    table.dataTable tbody tr:nth-child(even):hover td { background: #EEF2FF; }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      border-radius: 0.375rem !important;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 0.3rem 0.7rem !important;
+      border: none !important;
+      color: #475569 !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+      background: #EEF0F5 !important;
+      color: #1B2A5E !important;
+      border: none !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: #C0182A !important;
+      color: #fff !important;
+      border: none !important;
+      box-shadow: 0 2px 6px rgba(192,24,42,0.3);
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+      background: #9E1322 !important;
+      color: #fff !important;
+    }
+
+    /* ── Footer link ── */
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    /* ── Grain texture ── */
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730; position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:76px;">
+      <a href="index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none; flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:56px; width:auto; filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+      </a>
+      <nav style="display:flex; align-items:center; gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Stories</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem; border-radius:0.375rem; background:#C0182A; color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(192,24,42,0.35);">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Page Hero Banner ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 60%,#243575 100%); position:relative; overflow:hidden;">
+    <div style="position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3rem 1.5rem 2.75rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <a href="index.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <span style="color:#475569;font-size:0.8125rem;">›</span>
+        <span style="color:#CBD5E1;font-size:0.8125rem;">All-Time List</span>
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.75rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;">
+        All-Time Performance List
+      </h1>
+      <p style="color:#94A3B8;font-size:0.9375rem;line-height:1.7;max-width:560px;">
+        The all-time top performances in TWHS Track &amp; Field history, organized by event. Select a category and event to explore the full list.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Main Content ── -->
+  <main style="max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem 4rem;">
+
+    <!-- Gender Toggle -->
+    <div class="gender-toggle" id="gender-toggle" style="margin-bottom:1.75rem;">
+      <span class="gender-toggle-thumb"></span>
+      <button class="gender-toggle-option active" data-gender="boys">Boys</button>
+      <button class="gender-toggle-option" data-gender="girls">Girls</button>
+    </div>
+
+    <!-- Category Tabs -->
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.75rem;padding-bottom:1.75rem;border-bottom:1px solid #E2E8F0;">
+      <button class="tab-btn active" data-category="sprints">Sprints</button>
+      <button class="tab-btn" data-category="distance">Distance</button>
+      <button class="tab-btn" data-category="hurdles">Hurdles</button>
+      <button class="tab-btn" data-category="relays">Relays</button>
+      <button class="tab-btn" data-category="field">Field Events</button>
+    </div>
+
+    <!-- Event Buttons -->
+    <div id="event-buttons-container" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:2rem;"></div>
+
+    <!-- Table -->
+    <div id="events-container" style="background:#fff;border-radius:0.75rem;overflow:hidden;box-shadow:0 2px 12px rgba(27,42,94,0.08),0 6px 24px rgba(27,42,94,0.05);"></div>
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    // Wrap tables in a styled container after DataTable init
+    const _origLoadEvent = window._loadEvent;
+  </script>
+  <script src="assets/js/table.js"></script>
+  <style>
+    /* Post-init: add padding inside the events container */
+    #events-container { padding: 1.5rem; }
+    #events-container .event h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: #1B2A5E;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    table.dataTable { border-collapse: collapse; width: 100% !important; }
+    table.dataTable thead tr { background: #1B2A5E; }
+  </style>
+
+</body>
+</html>

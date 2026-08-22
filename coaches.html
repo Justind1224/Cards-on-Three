@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Coaches — TWHS Track &amp; Field</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+
+    /* ── Gantt ── */
+    .gantt-wrap {
+      background: #fff; border-radius: 0.875rem; overflow: hidden;
+      box-shadow: 0 2px 12px rgba(27,42,94,0.08), 0 6px 24px rgba(27,42,94,0.05);
+    }
+    .gantt-row {
+      height: 92px; position: relative;
+      border-bottom: 1px solid #EEF0F5;
+    }
+    .gantt-row:last-child { border-bottom: none; }
+    .gantt-row:nth-child(even) { background: #FAFBFD; }
+    .gantt-bar {
+      position: absolute; border-radius: 0.3rem;
+      border: 1px solid rgba(0,0,0,0.35);
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 0.5rem; overflow: hidden; white-space: nowrap;
+      color: #fff; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.01em;
+      cursor: pointer; transition: filter 0.15s, box-shadow 0.15s;
+    }
+    .gantt-bar:hover { filter: brightness(1.1); box-shadow: 0 2px 8px rgba(0,0,0,0.22); z-index: 2; }
+    .gantt-bar .bar-label { display: inline-block; }
+    .gantt-flag {
+      position: absolute; white-space: nowrap; pointer-events: none;
+      font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.01em;
+      padding: 1px 5px; border-radius: 0.25rem; background: #fff;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.2), 0 0 0 1px rgba(15,23,42,0.06);
+      line-height: 1.5; z-index: 1;
+    }
+    .gantt-tick { position: absolute; width: 1px; pointer-events: none; }
+    .decade-tick { position: absolute; top: 0; bottom: 0; width: 1px; background: #E8ECF4; pointer-events: none; }
+    .decade-label {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      font-size: 0.65rem; font-weight: 600; color: #94A3B8; white-space: nowrap;
+    }
+
+    /* ── Scrubber ── */
+    #scrubber {
+      position: absolute; top: 0; bottom: 0; width: 2px;
+      background: #C0182A; pointer-events: none; z-index: 20;
+    }
+    #scrubber-badge {
+      position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+      background: #C0182A; color: #fff;
+      font-size: 0.6875rem; font-weight: 700; padding: 0.2rem 0.55rem;
+      border-radius: 0.3rem; white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(192,24,42,0.4);
+    }
+    #scrubber::after {
+      content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent; border-right: 5px solid transparent;
+      border-top: 6px solid #C0182A;
+    }
+
+    /* ── Coach panel ── */
+    .cat-section {
+      background: #fff; border-radius: 0.75rem; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(27,42,94,0.07), 0 5px 20px rgba(27,42,94,0.04);
+    }
+    /* A long bio crammed into one narrow grid column is hard to read, so
+       toggleAcBio() opts a section into this once its open bio passes a
+       paragraph-count threshold, giving it the full row width instead. */
+    .cat-section-wide { grid-column: 1 / -1; }
+    .cat-section-wide .ac-bio-content {
+      column-count: 2; column-gap: 2.5rem; column-rule: 1px solid #EEF0F5;
+    }
+    .cat-header {
+      padding: 0.6rem 1rem; font-size: 0.6375rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; color: #fff;
+    }
+    .ac-card { padding: 1rem; border-top: 1px solid #EEF0F5; }
+    .ac-card:first-of-type { border-top: none; }
+    .ac-empty { padding: 1rem; font-size: 0.8rem; color: #CBD5E1; font-style: italic; text-align: center; }
+    .ac-toggle-btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 0.55rem 0; background: none; border: none; border-top: 1px solid #EEF0F5;
+      margin-top: 0.75rem; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; color: #64748B;
+      transition: color 0.15s;
+    }
+    .ac-toggle-btn:hover { color: #1B2A5E; }
+    .ac-chev { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); flex-shrink: 0; }
+    /* Collapsed state peeks the first line of the bio in full, plus a sliver
+       of the second line fading to white, so the card hints there's content
+       to expand rather than looking empty. */
+    .ac-bio { position: relative; max-height: 3rem; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .ac-bio::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1.25rem;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+      opacity: 1; transition: opacity 0.2s; pointer-events: none;
+    }
+    .ac-bio.is-open::after { opacity: 0; }
+    /* Placeholder bios ("Added soon") have nothing worth peeking at. */
+    .ac-bio.ac-bio-placeholder { max-height: 0; }
+    .ac-bio.ac-bio-placeholder::after { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:76px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:0.75rem;text-decoration:none;flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:56px;width:auto;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+      </a>
+      <nav style="display:flex;align-items:center;gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#fff;font-size:0.875rem;font-weight:600;text-decoration:none;transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Stories</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem;border-radius:0.375rem;background:#C0182A;color:#fff;font-size:0.875rem;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(192,24,42,0.35);">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 60%,#243575 100%);position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3rem 1.5rem 2.75rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <a href="index.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <span style="color:#475569;font-size:0.8125rem;">&#x203A;</span>
+        <span style="color:#CBD5E1;font-size:0.8125rem;">Coaches</span>
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.75rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;">
+        Coaches Through the Years
+      </h1>
+      <p style="color:#94A3B8;font-size:0.9375rem;line-height:1.7;max-width:560px;">
+        Click or drag anywhere on the timeline to see every coach serving the Cardinals in that year — head coaches, assistants, sprints, and throws.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Main ── -->
+  <main style="max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem 4rem;">
+
+    <!-- Gantt card -->
+    <div class="gantt-wrap" style="margin-bottom:2.5rem;">
+
+      <!-- Instruction bar + legend -->
+      <div style="padding:0.875rem 1.25rem;border-bottom:1px solid #EEF0F5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0182A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span style="font-size:0.8rem;color:#64748B;">Drag the red line or click any point on the chart to select a year</span>
+        </div>
+        <div id="legend" style="display:flex;align-items:center;gap:0.875rem;flex-wrap:wrap;"></div>
+      </div>
+
+      <!-- Chart body -->
+      <div style="display:flex;user-select:none;">
+
+        <!-- Label column (static) -->
+        <div id="label-col" style="width:148px;flex-shrink:0;border-right:1px solid #EEF0F5;">
+          <div style="height:34px;"></div>
+        </div>
+
+        <!-- Bars + scrubber -->
+        <div id="bars-col" style="flex:1;position:relative;cursor:crosshair;min-width:0;overflow:hidden;">
+          <div id="decade-hdr" style="height:34px;position:relative;border-bottom:1px solid #EEF0F5;"></div>
+          <div id="scrubber">
+            <div id="scrubber-badge">2010</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Active coaches heading -->
+    <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1.5rem;">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.03em;margin:0;">Coaches active in</h2>
+      <span id="year-display" style="font-family:'Playfair Display',serif;font-size:1.625rem;font-weight:800;color:#C0182A;letter-spacing:-0.03em;"></span>
+    </div>
+
+    <!-- 3-column panel -->
+    <div id="coaches-panel" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;min-height:192px;"></div>
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const START_YEAR = 1926;
+    const END_YEAR   = 2026;
+    const SPAN       = END_YEAR - START_YEAR;
+    const ROW_H      = 92; // keep in sync with .gantt-row height
+    const BAR_H      = 20;
+    const BAR_TOP    = Math.round((ROW_H - BAR_H) / 2);
+
+    const CATS = [
+      { id:'boys-head',  label:'Boys Head Coach',   color:'#C0182A', bg:'#FEF2F4', text:'#9E1322' },
+      { id:'girls-head', label:'Girls Head Coach',  color:'#1B2A5E', bg:'#EEF2FF', text:'#1B2A5E' },
+      //{ id:'boys-asst',  label:'Boys Asst. Coach',  color:'#D94F62', bg:'#FFF0F2', text:'#A83248' },
+      //{ id:'girls-asst', label:'Girls Asst. Coach', color:'#3B6CB7', bg:'#EFF4FF', text:'#1E3F80' },
+      //{ id:'sprints',    label:'Sprints Coach',     color:'#B45309', bg:'#FFFBEB', text:'#92400E' },
+      //{ id:'throws',     label:'Throws Coach',      color:'#047857', bg:'#ECFDF5', text:'#065F46' },
+      //{ id:'no-team',    label:'No Team',           color:'#A9A9A9', bg:'#FEF2F4', text:'#9E1322' }
+    ];
+
+    /* ── Coach data ──────────────────────────────────────────────────────────
+       Replace placeholder names, adjust year ranges, and write real bios.
+       Use end:9999 for coaches still active today.
+    ──────────────────────────────────────────────────────────────────────── */
+    const COACHES = [
+      // Boys Head Coach
+      { name:'James Stolzenbach', start:1926, end:1928, cat:'boys-head', photo: 'images/coachPictures/Stolzenbach Photo Enhanced GPT.png',bio:"<p> James Stolzenbach was born in in Junction City, Ohio. He graduated from Capital University in the spring of 1925, where he excelled in football and baseball, and was the captain of the basketball team. Starting at WHS in the fall of 1925, Coach Stolzenbach taught physics, chemistry, and general science. He is credited with revitalizing the track program, as Worthington had minimal track activities in the previous years. In his first year as track coach, Worthington finished second in the county meet, the best finish in school history. In the meet, WHS had two county champions—William Myers in the pole vault and Walter May in the standing broad jump.</p><p> After the 1927-28 school year, Mr. Stolzenbach left teaching and coaching to begin working in the field of insurance. He was the founder of Stolzenbach insurance, which was a successful insurance company in central Ohio into the 1980s. He married Rebecca Yauger in June of 1933, and they had two sons, John and James. Mr. Stolzenbach was a lifelong member of the Christ Lutheran Church, was very active in the Shriners, and served as president of the Ohio Senior Golf Association.</p><p> James Stolzenbach died on Easter Sunday, March 26, 1978, in Bradenton, Florida. He and his wife Becky are buried in New Lexington, Ohio.</p>" },
+      { name:'George Wanamaker', start:1929, end:1929, cat:'boys-head', photo: 'images/coachPictures/Wannamaker Photo Enhanced.png',bio:"<p> George Wanamaker was born in 1905 in Dickinson, South Dakota and grew up in Bexley. He graduated from Capital University in 1926 and taught at various high schools in central Ohio, including being on the staff at Worthington for the 1928-1929 school year. He led the football team to a 4-3-1 record and also coached basketball. In the county track meet, his Worthington athletes to score were Warren Insley in the pole vault, Ralph Quelette in the long jump, Paul Hartsook in the high jump, and Earl Trees in the discus.</p><p> George Wanamaker left Worthington High School after one year. He married Marietta Gugel in 1937 and they worked and lived on a farm in Union County. In 1947, the Wanamakers moved to Petosky, Michigan, where he was a cattle farmer for the rest of his caareer. He retired from farming in 1969 and moved back to Dublin, Ohio.</p><p> George Wanamaker died on January 22, 1981, in Spartanburg, South Carolina. He and his wife, Marietta, are buried in the St. Paul Lutheran Cemetery in Union County.</p>" },
+      { name:'Lester Miller', start:1930, end:1930, cat:'boys-head', bio:"<p> Lester Miller hired on at Worthington High School as coach for the 1929-1930 school year, and he was given a mandate: get Worthington playing baseball again. From 1927-1929, WHS had gone three springs in a row without being able to put together a baseball team, and Miller was the perfect choice to bring that disappointing streak to an end. Lester Miller was a former pitcher for the Ohio State Buckeyes who also pitched four years of professional baseball in the minor leagues. In addition, he had two older brothers who made it all the way: Russ Miller, who pitched two seasons with the Philadelphia Phillies in the late 1920s and Jake Miller, who pitched nine years in the big leagues, eight of which were spent with the Cleveland Indians. In Lester's first spring at WHS, 25 kids came out for the team—enough to restart the baseball program—and Worthington has played baseball ever since.</p><p> Unfortunately, his one spring at Worthington High saw little attention given to the sport of track and field. The only track activity in the spring of 1930 was the field day track meet on the lawn, where a team consisting of freshmen and juniors was trounced by the squad of sophomores and seniors to the tune of 71-37. Coach Miller did say that anyone who won an event in the field day meet was welcome to compete at the county championship, but no one took him up on the offer. The focus at Worthington was on baseball in the spring of 1930.</p><p> After one season, Lester Miller left WHS for a job with the Ohio State University College of Agriculture. He eventually spent most of his professional career as an executive for the B&O Railroad, acting as a liaison between the train company and the farming community in Ohio. Though he left the high school after one year, Lester Miller never left Worthington, later serving as head of the Worthington Civic Association and president of the Worthington School Board.</p><p> Lester John Miller died on January 18, 1966, at the age of 63. He is buried in Walnut Grove next to his wife, Marie.</p><p> In lieu of an actual track season, the most exciting track and field news in Worthington in the 1929-1930 school year was the fact that a young man named Kent Crooks lived on Hartford Street with his parents. A graduate of Sandusky High School who ran track for Ohio State University, Crooks competed as part of the Buckeyes’ shuttle hurdle relay team at the 1929 Penn Relays which broke the world record. He moved to Pittsburgh for work in April of 1930 but later returned to central Ohio to have a long career as an engineer at Battelle.</p><p> R. Kent Crooks was and remains the only track and field world record holder to ever live in the Village of Worthington.</p>" },
+      { name:'Harold McCord', start:1931, end:1938, cat:'boys-head', bio:"<p> With the departure of Lester Miller, Worthington High School found itself down one teacher and in need of a coach. The school board and the administration in the district had also decided that 1930-31 school year was a good time to start an industrial arts program at the high school, which is a fancy way of saying they wanted to hire a shop teacher. For a small school like Worthington, starting a shop program was a big decision, because not only do they need to pay the teacher's salary, but they also have to invest in all of the tools, machinery, equipment, and materials needed to teach shop. This is why, in addition to sending out the word about needing a shop teacher, the school board also put out a bid for someone to build them a new storage shed, which would be located where the tennis courts are today.</p><p> The person who got the job was a young man from Ashville, Ohio, by the name of Harold Cromley McCord. By today's standards, one would be excused for looking at his application and seeing red flags flying. Worthington High School was to be Harold McCord's fifth teaching job in his first five years. After graduating from Ohio University in 1925, McCord taught for one year at Millersport High School, near Buckeye Lake. The following year he taught at Batesville, some 80 miles to the east. Year three took him to Carey High School, north of Upper Sandusky, and his fourth year was in Salem, 30 miles east of Canton. There were surely some people in the Village who questioned how long Mr. McCord would stay in Worthington. They needn't have worried.</p><p> Why was he offered the shop teacher job in Worthington? My guess is that he uttered five words that carried a lot of weight in 1930… “I would like to coach.” Harold McCord had been a teacher and coach at each of his previous four teaching stops. And in 1930, in a school as small as Worthington, if you offered to coach, you were offering to coach everything: football, basketball, baseball, and whatever other sports they may offer. And in his first year as Coach McCord, he had a huge decision to make regarding spring sports… What to do with track? Coach Lester Miller had essentially dropped track in favor of baseball, so the easiest thing McCord could have done was to decide to coach just baseball, because anything he did on top of that would fall squarely upon him. There were no other coaches.</p><p> Instead of dropping track and field, he went all in. Instead of ending the track program, he established it. For the first time in school history, Worthington would have a track team, a track season, and a full slate of meets. And for the first time in school history, athletes could earn a varsity letter in the sport of track and field. Prior to Harold McCord's arrival, a track “season” at WHS would typically consist of (a) week or two of practice, (b) a dual meet on the front lawn, (c) heading to the county meet at Westerville High a week later, and (d) getting ready for graduation. Outside of the county meet, which may have had fifty athletes at most, Worthington had never been to a large invitational.</p><p> That all changed in 1931. In Harold McCord's first season, after week one at the Gahanna Invitational, the Cardinals headed to Ohio State University for the Ohio Relays. The college section of the meet featured—beyond the host Buckeyes— college powerhouses like Notre Dame, Michigan, Illinois, Northwestern and Nebraska. The high school section had teams from all across the state including Cleveland East Tech High, which featured a gangly sophomore sprinter who would go on five years later to sports immortality. In the second invitational in school history, Harold McCord had his Cardinals of Worthington High at Ohio Stadium racing against Jesse Owens.</p><p> In the spring of 1935, longtime principal Ms. Helen Robinson stepped down. Ms. Robinson began teaching at Worthington in the fall of 1906 after graduating from Ohio State earlier that spring. In 1910, she was asked to take on the role of principal in addition to her teaching duties, a responsibility she dutifully discharged for the next 25 years. After 30 years in the building, in 25 of which she was also the principal, she retired, telling the Worthington News she, “felt the need of a long rest.” One hopes the rest did her some good, because after retiring in 1935, Ms. Helen Robinson passed away—in 1980. She followed up her 30 year educational career with a 45-year retirement, putting a sizable dent in the state teachers retirement fund, all while serving on the library board and as president of the Worthington Women's Club along the way.</p><p> The school board asked Harold McCord to step in as principal in 1935, which he did. For three years, Harold McCord taught shop and Ms. Robinson's science class and coached four sports—all while serving as principal of the high school. In 1938, the superintendent of schools, D.S. Wickenham, resigned his position to work for an outfit descried as the largest book publisher in the Midwest. And though twelve people interviewed for the Worthington superintendent position, the school board knew who they wanted all along. Starting in the fall of 1938, Harold McCord became superintendent of the Worthington School District which, put an end to his coaching career.</p><p> Harold McCord would go on to serve as school superintendent from 1938 until his retirement in 1973. When he arrived in Worthington in 1930, there were 23 seniors in the yearbook. When he retired in 1973, there were nearly 400. It is difficult to quantify how much the world changed between the late 1930s and the early 1970s, but Harold McCord guided the Worthington school system through it all. When he retired, Harold McCord was the only superintendent of schools most residents of Worthington had ever known.</p><p> He is not remembered for his coaching career, but for many years—even after becoming superintendent—he was known around Worthington as “Coach McCord.” He was a great track coach, who should be remembered for three things: (1) He established track and field as a sport at the high school, with a full complement of meets; (2) He was the coach who made track a sport eligible for a varsity letter; and (3) in 1936, when he was principal and track coach, he oversaw the building of Worthington High School's first cinder track, where Evening Street Elementary stands today.</p><p> Upon his retirement, Superintendent McCord was made an honorary member of the class of 1973. The city of Worthington honored his service to the community by naming McCord Park after him, aptly located just blocks from the school district's administrative building. And in 1986, the Worthington School District honored him as well by naming the new middle school on Hard Road the Harold C. McCord Middle School. In a fitting testament to the growth he oversaw, McCord Middle now feeds into Worthington's second high school, Worthington Kilbourne.</p><p> Harold McCord died on Wednesday, January 12, 1977, and he is buried in Circleville, Ohio.</p>" },
+      { name:'Ernie Roush', start:1939, end:1940, cat:'boys-head', bio:"<p> Ernest James Roush was raised in Gahanna before graduating with a double major in mechanical engineering and physical education from Ohio State University. During his tenure in Worthington, the school experienced an unprecedented level of success. In the fall of 1938, Roush led the Cardinals football team to their first Franklin County championship. The next school year, Roush won Franklin County titles in basketball and track and field. One of Roush's star athletes was Clarence Emerson Cabell, who would go on to win two national championships at Florida A&M, before playing a year of professional football for the Long Beach Bulldogs after World War II.</p><p> In 1945, Roush left coaching and teaching to begin working for the Universal Cooler Corporation in Marion, Ohio, and later worked as an engineer for the Cleveland Electric Luminating Company. Even though he left coaching, Roush continued to serve high school sports as an official in football, basketball and track and field for 35 years. He was especially active as a football referee and, in 1973, the Central Ohio Football Officials Association established the Ernie Roush Award for meritorious service to the sport and to the association. Roush would end his career as an assistant to the dean of the College of Dentistry at Ohio State University, before retiring in 1977.</p><p> Ernest Roush died on November 28, 1991, at the age of 78. He and his wife, Grace, are buried Gahanna.</p>" },
+      { name:'Ray Heischman', start:1941, end:1941, cat:'boys-head', bio:"<p> It is not entirely clear who coached track and field in the spring of 1941. The coverage of the team was minimal in the pages of the Worthington News, and there was no yearbook that year. But someone shepherded the team in 1941, and a likely candidate was Ray Heischman, who was also the basketball coach, and who would be asked at the end of the school year to become the principal at the junior high.</p><p> The 1941 season was a rebuilding one, coming off the best season in school history. Many of the top athletes, including Emerson Cabell, graduated the previous year and Worthington could not defend its county championship, managing only a fifth-place finish as a team. The effort was spearheaded by Pete Fields, who finished second in both the shot put and the 100y dash. Worthington did not score at—and may not have even attended—the District championship in 1941. At season's end, Fields was joined by Ralph Howard as the only two varsity letter winners in the 1941 season.</p><p> The following spring there was no track season at Worthington High.</p><p> Ray Heischman graduated from Capital University in 1937, where he was one of the top players on the basketball team. He became a science and math teacher in the Worthington School System. After one year as principal at the junior high he became principle at Worthington High School, while continuing on as the basketball coach. In the 1945-1946 school year, Coach Heischman led the Cardinals to their best basketball season ever. After winning the Athens Regional, the Cardinals defeated Waynesburg by 1 point in the state semifinals before falling to Farmer in the state championship game.</p><p> Ray Heischman continued on as basketball coach through the 1951 season and was principal until 1955, when he resigned to go into private business with, among other ventures, the Worthington Realty Company. Heischman was very active in civic affairs and was an outstanding amateur golfer through his affiliation with Brookside County Club.</p><p> Ray Heischman's life was tragically cut short by a fatal car accident on March 21, 1962. The crash also took the life of fellow Worthington businessman Maynard Edwards, who was a former basketball player at Ohio State. Their deaths were front page news in The Columbus Dispatch.</p><p> Ray Heischman was only 47 years of age at the time of his passing, leaving behind a wife and three children. His wife, Ann, lived until 2011 and is buried alongside her husband in Walnut Grove.</p>" },
+      { name:'No Team', start:1942, end:1942, cat:'no-team', bio:"No team due to the war." },
+      { name:'Frank Howe', start:1943, end:1943, cat:'boys-head', bio:"<p> Frank Howe spent only one season at Worthington High School, but he made it count.</p><p> A sports star and 1936 graduate of Upper Arlington High School, he went on to play football at Ohio State University under head coach Francis Schmidt. He began his teaching and coaching career with a single year at Sunbury High School before coming to Worthington in the fall of 1942. His Cardinal football team that year played the final regular season game with a chance to tie for first place in the Franklin County League but came up short against Hilliard and had to settle for league runners-up. In the spring of 1943, his task was to restart the track and field program after the school had not being able to field a squad in 1942.</p><p> His 1943 Cardinal track team convincingly won the Franklin County championship meet over second-place Canal Winchester. The following week, the Cardinals also took the District championship in Class B, led by Carlton “Bud” Kessler, who would go on to score at the state meet in both the 120y high hurdles and the 220y low hurdles. It marked a resurgence at state for WHS, which had not scored at the state championship since 1936. It was also the first District championship in track and field in the history of Worthington High School.</p><p> Frank Howe left after one season and to coach football at Reynoldsburg, before enlisting in the Army during World War II. Following his military service, he became the longtime head football coach at Columbus Central High School, where he coached Howard “Hopalong” Cassidy, who would go on to win the Heisman Trophy for the Ohio State Buckeyes. After 18 years at Central, he would coach another 18 years at Northland High, winning five city league championships. In 1987, Coach Howe was inducted into the Ohio High School Athletic Association Hall of Fame.</p><p> Frank Henry Howe died on January 4, 2003, at the age of 84. He and his wife, Virginia, are buried in St. Joseph's Cemetery in Lockbourne, Ohio.</p>" },
+      { name:'Dow Nelson', start:1944, end:1945, cat:'boys-head', bio:"<p> Dow Nelson was born in The Plains, a small town in Athens County, and graduated from Ohio University—where he played outfield for the baseball team— before pursuing a career in education. His first teaching position was at Stockport High School, were he taught physical education and was an athletic coach. After two years at Stockport, he resigned, citing health concerns.</p><p> Nelson subsequently moved to northeast Ohio, where he was a teacher and assistant football coach at Cuyahoga Falls High School for five years. In 1942, Nelson signed on to be the head football coach and athletic director at Hillsboro High School, but just weeks before his first football game, he had an extended hospitalization due to suspected appendicitis, and he resigned without coaching a single game.</p><p> In the spring of 1943, he was on the move again, headed for Worthington.</p><p> Starting in the fall of 1943, Dow Nelson became the head football and track coach at Worthington High School. His two years at the helm of the track team were highlighted by the 1945 squad, which won the Muskingum Relays on their way to winning the school's second District championship, and they were one of the best track teams in school history to that point. The Cardinals qualified for state in nine events, scoring in three, with Malcolm Jones finishing 5th in the 220y dash, the 880y relay finishing second, and the quartet of Earl Nash, George Wood, Jim Sheaf, and Don Korte winning the mile relay. They were Worthington High School's first state champions in track and field.</p><p> Dow Nelson continued to teach and coach football and basketball through the 1956-1957 school year before assuming a newly created position, becoming Worthington High School's first athletic director, a position he had held ever so briefly in Hillsboro some fifteen years before. He also served as the secretary of the Ohio Athletic Director's Association.</p><p> On November 9, 1965, eight years into his term as athletic director, Dow Nelson was asked to speak at the football banquet at the high school. While speaking about fond memories from his early years in coaching, he suffered a fatal heart attack. Newspaper accounts reported that he previously had a minor heart attack in 1948, when he was only 34 years old. His sudden death was noted in newspapers throughout the state of Ohio.</p><p> One of the eulogies for Dow Nelson was delivered by WHS English teacher Charles Rousculp.</p><p style=\"margin:0.85rem 0;padding:0.6rem 0 0.6rem 0.9rem;border-left:3px solid #C0182A;font-style:italic;color:#64748B;\">“Foremost the lessons he taught are these: (1) When you play the game of life you win always and only when you play the game wholeheartedly; and (2) To put your fellow man before yourself is to win the greatest victory. “</p><p> Worthington High School honors the legacy and career of Coach Nelson by naming the sports complex which encompasses the football stadium, the track, and the field house, the Dow Nelson Sports Complex.</p><p> Dow Lorenzo Nelson was 52 years old when he died. He was survived by his wife, Millie, and his daughter, Linda. He is buried in Walnut Grove Cemetery.</p>" },
+      { name:'Al Hittepole', start:1946, end:1946, cat:'boys-head', bio:"<p> Worthington High School needed a track coach in the spring of 1946. It turned out, they needed a coach for only one season, but if you needed a guy to fill in for one year, you could do a whole lot worse than Al Hittepole.</p><p> Al Hittepole graduated from Ohio State University in 1930 and began his teaching and coaching careers with positions at Rushylvania, a small village in Logan County and Deshler, slightly larger village in Henry County. In 1935, Hittepole left Deshler to become a science teacher and coach at Canal Winchester. During World War II, he left Canal to serve in the United States Coast Guard in the Physical Training Program, which was headed up nationally by former heavyweight champion Jack Dempsey. In 1942, the Columbus Dispatch ran a photograph of over two dozen Ohio high school and college coaches serving in this program, including Hittepole and other coaches from Alliance, Youngstown, Wilmington, Greenfield, Canton, and Springfield, among many others.</p><p> In November of 1945, upon his discharge from the Coast Guard, Hittepole signed on to be a teacher at the middle school in Worthington. He was a perfect choice to fill in as track coach in the spring of 1946, based on his successful stint at Canal Winchester, which including having an athlete place second in the state in the shot put in 1939.</p><p> His one season as Worthington's track coach was one to remember. Under the direction of Coach Hittepole, the Cardinals finished second in the county meet but came back to win the District Championship at Ohio Wesleyan. His star sprinter, Earl Nash, finished second in the state in the 440y run—tying for the best individual finish school history—and his mile relay garnered fifth, leading Worthington to a top 15 finish in the state as a team. After his one season coaching high school, he transitioned to being a middle school coach.</p><p> Al Hittepole served Worthington in the summers by heading up the community recreation programs and was always available to help officiate football and basketball as a long-standing member of both the Central Ohio Football Officials Association and Central Ohio Basketball Officials Association. In 1950, he happened to be at a basketball game between Groveport and Hamilton when one of the officials took ill at halftime, and Hittepole came out of the stands to referee the second half.</p><p> In 1948, Hittepole left the school district to work at Ohio State University, where he was the Assistant Dean for Men, along with being in charge of student housing.</p><p> Sadly, Al Hittepole died young, succumbing to a heart attack at the age of 51, leaving behind a wife and two young children. Given his career as a teacher, coach, and referee, his service in the military, and his role at Ohio State University, his passing was noted in more than a dozen newspapers across the state.</p><p> Marly Hittepole is a teacher in the Worthington School District. She is the daughter of Alan Hittepole, who was 12 years old when his father died. I sent Marly a picture of a page from a 1940s yearbook which featured a quick bio and signature for each coach, including Coach Hittepole. She told me a few things about her grandfather, a man she never met. She then thanked me for the picture, and added, “I've never even seen his signature until now.”</p><p> Almond Eldon Hittepole died on November 5, 1948. He and his wife, Pauline, are buried in Dublin Cemetery.</p>" },
+      { name:'Les Eisenhart', start:1947, end:1981, cat:'boys-head', bio:"<p> Les Eisenhart graduated from Columbus North High School in 1937. During his senior year, he won the state championship in the 880y run, with a state record time of 1:58.6. It is a time that would still highly contribute on state ranked 4x800m relays, and Eisenhart ran that time 89 years ago, on cinders. He went on to have a stellar career as a middle distance runner for the Ohio State Buckeyes, where was an NCAA All-American and a seven-time AAU National Champion during an era when that AAU titles were a calling card. In 1941, he finished sixth at the USA Track and Field Championships in the 800m. Unfortunately, like all of his contemporaries, he was denied a chance at the Olympic Games due to the cancellations of the 1940 and 1944 Olympiads due to the war.</p><p> Les Eisenhart served his country in World War II and when it was over, he was a young man out looking for a job. What he hoped to be was a high school teacher and track coach, and the place where he hoped to do that was at his alma mater, Columbus North. To prove his dedication to North, he served one season as an unpaid assistant coach, helping lead them to a District Championship. But after the 1946 season, Columbus North offered him neither a teaching position nor a coaching position.</p><p> The place that offered him both was Worthington High School.</p><p> The hiring of Les Eisenhart as a shop teacher in the summer of 1946 is the single most transformative event in the sport's history at WHS. Everything changed after that. With his hiring, there were thirteen teachers on the staff at Worthington High, and only five of them were men. One of those five just happened to be a world-class half-miler, something superintendent Harold McCord—the former track coach—knew full well when Eisenhart applied. That's not the type of break that comes along too often to a sports program at a school the size of Worthington.</p><p> Les Eisenhart arrived in the fall of 1946 and he had what he wanted: a teaching job and a team to coach. He set about creating the program in his image, implementing changes that Worthington is still benefiting from to this day. He would elevate Worthington to the upper echelon of the sport in Ohio and he would become the face of Worthington High School's track program for the next three decades, on his way to the Hall of Fame.</p><p> One of the first changes Les made was to start a cross country team, a sport the OHSAA had been sponsoring since 1927. Until the arrival of Coach Eisenhart, Worthington had been too small to even consider a second fall team, after football. When Harold McCord showed up in 1930, there were only 23 seniors in yearbook, and only 10 of them were boys. In Eisenhart's first year as coach, there were 69 seniors in yearbook, 30 of whom were male. The school was just big enough to try and cobble together a cross country team, which Eisenhart did, starting in the fall of 1947.</p><p> It was a rather inauspicious beginning for Worthington Cross Country. Six young men went out for cross country that first season, only one more than the bare minimum required to have a team at all. The Cardinals competed in a grand total of two meets, neither of which went well. They ran a dual meet against Columbus South and were trounced. A few weeks later they competed in a quad meet against Newark and two other city league schools, and Worthington did not have the requisite five runners finish the two-mile race to even qualify for a team score. And that was the end of the 1947 season.</p><p> In 1949, the Cardinals qualified for state.</p><p> Les Eisenhart would go on to coach the Cardinals cross country team through the 1980 season and you could easily put Les Eisenhart's tenure as a cross country coach at Worthington up against almost any other team in any other sport, as a period of sustained excellence. In his 35-year stretch, the Cardinals qualified for the state championship 26 times including, between 1960 and 1974, fifteen years in a row—still the longest streak ever by a central Ohio boys team. Coach Eisenhart had 18 top 10 finishes as a team, won the state championship in 1967 and he had two individual state champions: Jack Blackburn in 1953 and Jim Miller in 1956. If Les Eisenhart never coached a track meet at Worthington High School, he would still be in the Hall of Fame, based solely on his accomplishments in cross country.</p><p> But he did coach track, and the first track meet he ever coached at Worthington was, remarkably, an indoor meet that he hosted. This was significant because not only had Worthington High never staged an indoor meet before, they had never attended one before. It was true of Worthington, and it was true of almost every other high school in central Ohio at that time. It is not an exaggeration to say that indoor track essentially did not exist as a high school sport in central Ohio prior to WHS hiring Les Eisenhart in 1946. The main—and simple— reason there were no indoor track meets in central Ohio is because there were no indoor tracks in central Ohio. In the hands of a lesser coach, this would be a problem.</p><p> On March 28, 1947, Les Eisenhart hosted what was, in all likelihood, central Ohio's first high school indoor track meet. It was a dual meet against Columbus West, one that featured sprints, low hurdles, high hurdles, the shot put, the 880y relay and the mile relay. In the end, the boys from West bested the Cardinals by a score of 46-45. The meet was held in, of all places, the cattle barns at the Ohio State Fairgrounds.</p><p> After staging another meet in the cattle barns in 1948, Eisenhart must have been told by the Fair Director— or the Governor— that Worthington High School could no longer host meets at the Fairgrounds. Coach Eisenhart subsequently approached his alma mater about the issue and, starting in 1950, Worthington started hosting indoor track meets at Ohio State, which was quite a trick considering that OSU also did not have an indoor track.</p><p> Starting in the March of 1950, Worthington began hosting indoor track meets under the west stands at Ohio Stadium. At the conclusion of each football season, Ohio State would tarp off the west concourse and create a makeshift track facility, complete with field event areas and a painted, concrete track, where the OSU track teams—which, just a few years earlier had included Eisenhart—would practice every winter. And if it was good enough for Ohio State to practice on, it was good enough for Worthington High School track meets. So, for the next few years, WHS had their indoor meets at “The Horseshoe.”</p><p> After a few years, Les worked with other central Ohio track coaches to create a new concept for an indoor meet: an invitational. On March 25, 1954, the Greater Columbus Indoor high school track meet was held under the west stands at Ohio Stadium, and it continued every year until the meet was moved to Ohio State's newly built indoor track, French Fieldhouse, in 1958. The meet would eventually be called the Central District Indoor Championship and it was the premiere high school indoor meet in the state for 50 years, usurped only by the creation of the Ohio Association of Track and Cross Country Coaches Indoor State Championship meet, which began in 2005.</p><p> In Eisenhart's first four years, the Cardinals won the county meet twice and finished second the other two years. With the joining of the Mid-Six Conference starting with the 1950 season, there was no longer any room on the schedule for the county meet.</p><p> During Les Eisenhart's career, his track teams competed in 30 conference championships—spanning four different conferences—winning 21 of them. The nine years when the Cardinals did not win the conference, they finished second. For his entire career, he never had a team finish below second in the conference championship.</p><p> For almost all of Coach Eisenhart's tenure, there was no Regional meet, meaning the District meet crowned the best track team in central Ohio every year. Les Eisenhart won ten District Championships and finished second seven times during his career at Worthington High.</p><p> The one title that eluded Les Eisenhart was a state championship in track to go with the one he won in cross country. His best chances to win one would have been in his first five years as a coach, when Worthington was one of the larger schools in the small school division. By 1953, Worthington High's enrollment had increased to the point where WHS became one of the smaller schools in the big school division, making team titles more challenging.</p><p> He did coach three state champions—four if you twice count Doug Harris, who won the 100y dash in 1979 and 100m dash in 1980. Harris joined Duane Pelkey, who won the 120y high hurdles in 1957 and Tim Kight, who won the 180y hurdles in 1970. Throughout his career, Eisenhart had 28 athletes or relays earn All-Ohio honors and he had 129 athletes or relays qualify for state, an average of nearly four events per year. Thanks in large measure to Coach Eisenhart, despite having started the program twenty years late, Worthington High now has the second most cross country state championship appearances in the history of the OHSAA.</p><p> Les Eisenhart retired after the 1981 track season, finishing off a 35 year run at Worthington High School. The annual cross country invitational held each fall was renamed the Les Eisenhart Invitational, which continues to this day. For many years following his retirement, he would come back to be the honorary starter for the meet held down at the Flats.</p><p> In 1987, Les Eisenhart was inducted into the Ohio Association of Track and Cross Country Coaches Hall of Fame, an organization he had served as president. He is also a member of the Ohio Capital Conference Hall of Fame and is considered one great track and cross country coaches in history of Ohio high school sports.</p><p> Harold “Les” Eisenhart died on March 4, 1998, in Corpus Christi, Texas, at the age of 78. He and his wife, Betty, are buried in Union Cemetery in Columbus, just north of the campus of Ohio State University.</p>" },
+      { name:'Gary Smith', start:1982, end:1984, cat:'boys-head', bio:"Added soon" },
+      { name:'Chuck Clark', start:1985, end:1985, cat:'boys-head', bio:"Added soon" },
+      { name:'Jon Daup', start:1986, end:1987, cat:'boys-head', photo: 'images/coachPictures/Daup Picture Enhanced.png', bio:"<p> Jon Daup grew up in Plymouth, Ohio, a small town about 20 miles northwest of Ashland. He went to Plymouth High School where he excelled in basketball and baseball and ran the 2-mile in track. After graduating from Ashland University, he began his career of teaching and coaching at Crestview High School, where he served as the head basketball coach and assistant track coach. From 1979 to 1987 he taught at Worthington High School and he was the head basketball coach from 1979 to 1983. In his last two years at WHS he was the boys track coach, and his two seasons at the helm of the track team were an unqualified success.</p><p> In the 1986 campaign, the Cardinals won the Central District Indoor and the Ohio Capital Conference championship, before handily defeating Upper Arlington to win the District Championship. At the Regional, the Cards were runners-up to Lima Senior, which equaled the best finish in school history, and the 4x800m relay finished 5th at the state meet in a school record of 7:50.44. Daup's 1987 squad nearly duplicated 1986's exploits, by winning the CDI, tying for first in the OCCs, and again winning the District title. The 1987 team went on to finish 12th in the state powered by a 4th place 4x800 relay and a school record high jump of 7' 0” by Tom Lange, resulting in a third place finish. In his two-year stretch as Worthington's track coach, he was named the District Coach of the Year for both seasons.</p><p> After the 1987, he moved on to coach and teach in the Dublin school system. He was a boys basketball coach at Dublin High School for six years and later he helped coach the girls basketball team at Dublin Scioto. He also coached two years at the junior college level at Columbus State.</p><p> Jon Michael Daup passed away on November 19, 2025, at the age of 75, survived by his two children and three grandchildren.</p>" },
+      { name:'Roger Johnson', start:1988, end:1992, cat:'boys-head', bio:"Added soon" },
+      { name:'Matt Chrispin', start:1993, end:1994, cat:'boys-head', bio:"Added soon" },
+      { name:'Gary Smith', start:1995, end:1996, cat:'boys-head', bio:"<p> Added soon" },
+      { name:'Andy Cox', start:1997, end:2012, cat:'boys-head', bio:"Added soon" },
+      { name:'Dominick Mazza', start:2013, end:2013, cat:'boys-head', bio:"<p> Dominick Mazza grew up in Worthington and was an accomplished sprinter for Thomas Worthington High School. In 2001, he was part of the 4x100m relay that won the Regional in 42.57, which is still the third fastest time in school history. Mazza went on to run track for Otterbein and graduated in 2005 with a degree in Health. From 2007-2012, Mazza was a sprint coach for his alma mater and highlights include having three state champion relays: The 4x200m relays in 2011 and 2012, and the 4x400m relay in 2012. The 2012 team finished fourth in the state, with all 34 points coming from an elite group of sprinters he helped coach.</p><p> For the 2013 season, Dominick was elevated to head track coach. His one season at the helm was a rebuilding year for the team but it did see future school record-hold Malyk Burks advance to the state championship in the long jump.</p><p> In January of 2014, Mazza accepted a position as the director of Child Care Programs for the YMCA of Central Ohio, a position he held for two years. He simultaneously worked in Youth Development for the central Ohio area for Fleet Feet Sports. Mazza was a teacher at St. Charles Preparatory School for six years, where he is still an assistant football coach. From 20121 -2024, he coached the elite sprint crew at Gahanna Lincoln, and he is currently working as a Program Manager at Nationwide Children's Hospital.</p><p> In 2017, Coach Mazza came back to coach sprints for one season at Thomas Worthington. He coached Kainnan Ramsey—a senior soccer player who had never run track before—to a 5th place finish in the 100m and a 7th place finish in the 200m at the state meet, helping TWHS win its third OHSAA State Championship as a team.</p><p> Dominick, his wife Maria, and their son, Luca, live in Grove City.</p>" },
+      { name:'Bill Darling', start:2014, end:9999, cat:'boys-head', bio:"<p> Bill Darling grew up in Carbondale, Illinois and graduated from Carbondale Community High School. He ran cross country and track for Bill Cornell at Southern Illinois University before transferring prior to his junior year to Miami University, where ran for head coach Chuck Zody. Darling worked as a mental health social worker and as a rehabilitation counselor for injured workers prior to accepting a job at Ohio State University in the fall of 2000. He is the director of Assistive Technology of Ohio, a statewide disability technology program housed in the College of Engineering at OSU.</p><p> Darling began his coaching career at Thomas Worthington as an assistant cross country coach and volunteer assistant track coach for the 2011-2012 school year. In the spring of 2014 he was elevated to head boys track coach and was named head boys cross country coach later that fall. In his time as head boys coach, the Cardinals had three state champions: the 2017 4x800m relay, Justin Braun in the 400m in 2019, and the 4x400m relay in 2022. The 2017 team won the state championship, the third team title in school history.</p><p> Bill and his wife, Jill, are the parents of six children, all of whom graduated for, and ran for, Thomas Worthington High School." },
+
+      // Girls Head Coach
+      { name:'Jennifer Elin', start:1975, end:1975, cat:'girls-head', bio:"Added soon" },
+      { name:'Peggy McCloskey', start:1976, end:1976, cat:'girls-head', bio:"Added soon" },
+      { name:'Jennifer Elin', start:1977, end:1989, cat:'girls-head', bio:"Added soon" },
+      { name:'Gary Smith', start:1990, end:1991, cat:'girls-head', bio:"<p> Gary Smith (Boys Head Coach 1982-1984, 1994-1996; Girls Head Coach 1990-1991)</p>" },
+      { name:'Nancy Beattie', start:1992, end:2011, cat:'girls-head', bio:"Added soon" },
+      { name:'Evie Scholl', start:2012, end:2012, cat:'girls-head', bio:"Added soon" },
+      { name:'Andy Cox', start:2013, end:9999, cat:'girls-head', bio:"Added soon" },
+
+      // Boys Asst. Coach
+      // { name:'Coach Name', start:1960, end:2015, cat:'boys-asst', bio:"Added soon" },
+      // { name:'Izzy Darling', start:2024, end:9999, cat:'boys-asst', photo: 'images/Izzy Photo.jfif' ,bio:"Added soon" },
+
+      // Girls Asst. Coach
+      // { name:'Coach Name', start:1965, end:1988, cat:'girls-asst', bio:"Added soon" },
+      // { name:'Coach Name', start:1988, end:9999, cat:'girls-asst', bio:"Added soon" },
+
+      // Sprints Coach
+      // { name:'Coach Name', start:1970, end:1992, cat:'sprints', bio:"Added soon" },
+      // { name:'Coach Name', start:1992, end:2010, cat:'sprints', bio:"Added soon" },
+      // { name:'Coach Name', start:2010, end:9999, cat:'sprints', bio:"Added soon" },
+
+      // Throws Coach
+      // { name:'Coach Name', start:1975, end:1998, cat:'throws', bio:"Added soon" },
+      // { name:'Coach Name', start:1998, end:9999, cat:'throws', bio:"Added soon" },
+    ];
+
+    /* ── Build Gantt chart ── */
+    const labelCol   = document.getElementById('label-col');
+    const barsCol    = document.getElementById('bars-col');
+    const decadeHdr  = document.getElementById('decade-hdr');
+    const scrubber   = document.getElementById('scrubber');
+    const scrubBadge = document.getElementById('scrubber-badge');
+
+    // Decade ticks + labels in header
+    for (let y = START_YEAR; y <= END_YEAR; y += 10) {
+      const pct = (y - START_YEAR) / SPAN * 100;
+      const tick = document.createElement('div');
+      tick.className = 'decade-tick';
+      tick.style.left = pct + '%';
+      decadeHdr.appendChild(tick);
+      const lbl = document.createElement('div');
+      lbl.className = 'decade-label';
+      lbl.style.left = pct + '%';
+      lbl.textContent = y;
+      // The default centered transform pushes half the text off-canvas at
+      // the first/last tick, where it gets clipped by bars-col's overflow.
+      // Align those two edge labels inward instead of centering them.
+      if (y === START_YEAR) lbl.style.transform = 'translate(0, -50%)';
+      else if (y === END_YEAR) lbl.style.transform = 'translate(-100%, -50%)';
+      decadeHdr.appendChild(lbl);
+    }
+
+    // Legend
+    CATS.forEach(cat => {
+      const dot = document.createElement('div');
+      dot.style.cssText = 'display:flex;align-items:center;gap:0.3rem;';
+      dot.innerHTML = '<div style="width:10px;height:10px;border-radius:2px;background:' + cat.color + ';"></div>'
+        + '<span style="font-size:0.6875rem;color:#64748B;font-weight:500;">' + cat.label + '</span>';
+      document.getElementById('legend').appendChild(dot);
+    });
+
+    // Build one label + one bar row per category. Bars themselves are
+    // positioned with %, so they reflow for free on resize — but the flag
+    // labels/tick lines above are packed in pixels measured against the
+    // chart's width at build time (see the collision-avoidance pass below),
+    // so they go stale (misaligned, wrong lanes) once the page is resized.
+    // Wrapping this in a function that a resize listener can re-run keeps
+    // them correct at any width, at the cost of a full rebuild of the rows.
+    function renderRows() {
+      // Drop anything from a previous render before rebuilding.
+      labelCol.querySelectorAll('.gantt-row-label').forEach(el => el.remove());
+      barsCol.querySelectorAll('.gantt-row').forEach(el => el.remove());
+
+      CATS.forEach(cat => {
+      // Label
+      const lbl = document.createElement('div');
+      lbl.className = 'gantt-row-label';
+      lbl.style.cssText = 'height:' + ROW_H + 'px;display:flex;align-items:center;padding:0 0.75rem;'
+        + 'font-size:0.6rem;font-weight:700;color:' + cat.color + ';letter-spacing:0.05em;'
+        + 'text-transform:uppercase;border-bottom:1px solid #EEF0F5;line-height:1.3;';
+      lbl.textContent = cat.label;
+      labelCol.appendChild(lbl);
+
+      // Row
+      const row = document.createElement('div');
+      row.className = 'gantt-row';
+
+      // Decade grid lines
+      for (let y = START_YEAR; y <= END_YEAR; y += 10) {
+        const tick = document.createElement('div');
+        tick.className = 'decade-tick';
+        tick.style.left = (y - START_YEAR) / SPAN * 100 + '%';
+        row.appendChild(tick);
+      }
+
+      // Bars
+      const rowBars = [];
+      COACHES.filter(c => c.cat === cat.id).forEach(coach => {
+        // Extend the drawn end by one year so a coach ending in year Y
+        // touches the next coach's bar starting in year Y+1, with no gap.
+        const barEnd   = Math.min(coach.end + 1, END_YEAR);
+        const leftPct  = (coach.start - START_YEAR) / SPAN * 100;
+        const widthPct = (barEnd - coach.start) / SPAN * 100;
+        const endLabel = coach.end >= 9999 ? 'Present' : coach.end;
+
+        const bar = document.createElement('div');
+        bar.className = 'gantt-bar';
+        bar.style.left       = leftPct + '%';
+        bar.style.width      = widthPct + '%';
+        bar.style.top        = BAR_TOP + 'px';
+        bar.style.height     = BAR_H + 'px';
+        bar.style.background = cat.color;
+        bar.title  = coach.name + '  (' + coach.start + '–' + endLabel + ')';
+
+        const label = document.createElement('span');
+        label.className = 'bar-label';
+        label.textContent = coach.name;
+        bar.appendChild(label);
+
+        bar.addEventListener('click', e => {
+          e.stopPropagation();
+          const mid = Math.round((coach.start + Math.min(coach.end >= 9999 ? END_YEAR : coach.end, END_YEAR)) / 2);
+          setYear(mid);
+        });
+
+        row.appendChild(bar);
+        rowBars.push({ bar, label, coach });
+      });
+
+      barsCol.appendChild(row);
+
+      // Second pass: bars too narrow to hold the full name would otherwise
+      // clip down to one or two illegible letters. Pull those labels out
+      // into a small flag above or below the bar instead, connected by a
+      // tick line. Runs after barsCol.appendChild(row) above so widths/
+      // offsets, which depend on the row being in the live DOM, are
+      // measurable here.
+      //
+      // Flags are packed left-to-right across four stacked lanes (two above
+      // the bar, two below): each candidate goes to whichever lane needs the
+      // least rightward nudge to clear the flag already placed there, so
+      // dense clusters (e.g. a run of one-year coaches) spread out instead
+      // of overlapping. The result is clamped inside the chart so it never
+      // gets clipped at the edges.
+      const barBottomPx = BAR_TOP + BAR_H;
+      const LANES = [
+        { top: BAR_TOP - 16,     dir: 'above' },
+        { top: 2,                dir: 'above' },
+        { top: barBottomPx + 4,  dir: 'below' },
+        { top: ROW_H - 15,       dir: 'below' },
+      ];
+      const laneRight = new Array(LANES.length).fill(-Infinity);
+      const colW      = barsCol.clientWidth;
+
+      rowBars
+        .filter(({ bar, label }) => label.scrollWidth > bar.clientWidth - 16)
+        // Sort by each coach's true tenure midpoint, not the drawn bar's
+        // position — the bar's own left edge/width were stretched to close
+        // the gap to the next coach (see "Extend the drawn end" above), so
+        // reading position off the bar itself would drift a narrow, e.g.
+        // single-year, tenure's anchor a half-year+ off from where it
+        // actually falls.
+        .sort((a, b) => (a.coach.start + a.coach.end) - (b.coach.start + b.coach.end))
+        .forEach(({ bar, label, coach }) => {
+          label.style.display = 'none';
+
+          const trueMidYear = (coach.start + coach.end) / 2;
+          const centerX = (trueMidYear - START_YEAR) / SPAN * colW;
+
+          const flag = document.createElement('div');
+          flag.className = 'gantt-flag';
+          flag.style.color = cat.text;
+          flag.textContent = coach.name;
+          row.appendChild(flag);
+          const flagWidth = flag.offsetWidth;
+
+          const desiredLeft = centerX - flagWidth / 2;
+          let bestLane = 0, bestShift = Infinity;
+          for (let i = 0; i < LANES.length; i++) {
+            const shift = Math.max(0, (laneRight[i] + 4) - desiredLeft);
+            if (shift < bestShift) { bestShift = shift; bestLane = i; }
+          }
+          let actualLeft = Math.max(2, Math.min(desiredLeft + bestShift, colW - flagWidth - 2));
+          laneRight[bestLane] = actualLeft + flagWidth;
+
+          const lane = LANES[bestLane];
+          flag.style.left = actualLeft + 'px';
+          flag.style.top  = lane.top + 'px';
+
+          // Only draw a leader line when the flag stayed near its true
+          // position — once nudged to avoid a collision, a tick would
+          // misleadingly point away from the bar it's shifted from.
+          if (Math.abs(actualLeft - desiredLeft) < 6) {
+            let tickTop, tickHeight;
+            if (lane.dir === 'above') {
+              const laneBottom = lane.top + flag.offsetHeight;
+              tickTop = laneBottom;
+              tickHeight = BAR_TOP - laneBottom;
+            } else {
+              tickTop = barBottomPx;
+              tickHeight = lane.top - barBottomPx;
+            }
+            if (tickHeight > 0) {
+              const tick = document.createElement('div');
+              tick.className = 'gantt-tick';
+              tick.style.left       = centerX + 'px';
+              tick.style.top        = tickTop + 'px';
+              tick.style.height     = tickHeight + 'px';
+              tick.style.background = cat.color;
+              row.appendChild(tick);
+            }
+          }
+        });
+      });
+    }
+
+    renderRows();
+
+    // Rebuild on resize (debounced) so the pixel-packed flags/ticks stay
+    // aligned to the bars, which reflow for free since they're in %.
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(renderRows, 150);
+    });
+
+    /* ── Scrubber drag ── */
+    let selectedYear = 2010;
+    let dragging = false;
+
+    function yearFromClientX(clientX) {
+      const rect = barsCol.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      return Math.round(START_YEAR + pct * SPAN);
+    }
+
+    function setYear(year) {
+      selectedYear = Math.max(START_YEAR, Math.min(END_YEAR, year));
+      const pct   = (selectedYear - START_YEAR) / SPAN;
+      scrubber.style.left = 'calc(' + (pct * 100) + '% - 1px)';
+      const label = selectedYear >= END_YEAR ? 'Present' : selectedYear;
+      scrubBadge.textContent = label;
+      document.getElementById('year-display').textContent = label;
+
+      // Clamp badge horizontally so it never clips at the left or right edge
+      const halfW = scrubBadge.offsetWidth / 2;
+      const colW  = barsCol.offsetWidth;
+      const x     = pct * colW;
+      const shift = Math.max(halfW - x, 0) - Math.max(x + halfW - colW, 0);
+      scrubBadge.style.transform = 'translateX(calc(-50% + ' + shift + 'px))';
+
+      renderPanel(selectedYear);
+    }
+
+    barsCol.addEventListener('mousedown', e => { dragging = true; setYear(yearFromClientX(e.clientX)); });
+    document.addEventListener('mousemove', e => { if (dragging) setYear(yearFromClientX(e.clientX)); });
+    document.addEventListener('mouseup', () => { dragging = false; });
+    barsCol.addEventListener('touchstart', e => { dragging = true; setYear(yearFromClientX(e.touches[0].clientX)); }, { passive: true });
+    document.addEventListener('touchmove', e => { if (dragging) setYear(yearFromClientX(e.touches[0].clientX)); }, { passive: true });
+    document.addEventListener('touchend', () => { dragging = false; });
+
+    /* ── Render coach panel ── */
+    function renderPanel(year) {
+      const panel = document.getElementById('coaches-panel');
+      panel.innerHTML = '';
+
+      CATS.forEach(cat => {
+        const active = COACHES.filter(c => c.cat === cat.id && c.start <= year && c.end >= year);
+
+        const section = document.createElement('div');
+        section.className = 'cat-section';
+
+        const header = document.createElement('div');
+        header.className = 'cat-header';
+        header.style.background = cat.color;
+        header.textContent = cat.label;
+        section.appendChild(header);
+
+        if (active.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'ac-empty';
+          empty.textContent = 'No coaches on record for this period.';
+          section.appendChild(empty);
+        } else {
+          active.forEach(coach => {
+            const endLabel = coach.end >= 9999 ? 'Present' : coach.end;
+            // +1 to count inclusively: a coach who starts and ends in the
+            // same year served that one year, not zero.
+            const yrs = (Math.min(coach.end >= 9999 ? END_YEAR : coach.end, END_YEAR)) - coach.start + 1;
+            const hex = cat.color.replace('#', '');
+            const isPlaceholderBio = (coach.bio || '').replace(/<[^>]+>/g, '').trim().toLowerCase() === 'added soon';
+
+            const card = document.createElement('div');
+            card.className = 'ac-card';
+            card.setAttribute('data-coach-card', '');
+            card.innerHTML =
+              '<div style="display:flex;gap:0.75rem;align-items:flex-start;">'
+              + '<img src="' + (coach.photo || 'https://placehold.co/60x74/' + hex + '/ffffff?text=Photo') + '"'
+              + ' data-coach-img style="width:60px;height:74px;object-fit:cover;object-position:top;border-radius:0.375rem;flex-shrink:0;transition:width 0.4s cubic-bezier(0.4,0,0.2,1),height 0.4s cubic-bezier(0.4,0,0.2,1);" />'
+              + '<div style="flex:1;min-width:0;">'
+              + '<div style="font-family:\'Playfair Display\',serif;font-size:0.9375rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.02em;margin-bottom:0.15rem;">' + coach.name + '</div>'
+              + '<div style="font-size:0.75rem;font-weight:600;color:' + cat.color + ';margin-bottom:0.35rem;">' + coach.start + '–' + endLabel + '</div>'
+              + '<span style="background:' + cat.bg + ';color:' + cat.text + ';font-size:0.625rem;font-weight:700;padding:0.15rem 0.425rem;border-radius:0.2rem;display:inline-block;">' + yrs + (yrs === 1 ? ' yr' : ' yrs') + '</span>'
+              + '</div></div>'
+              + '<button class="ac-toggle-btn" onclick="toggleAcBio(this)">'
+              + '<span>More about this coach</span>'
+              + '<svg class="ac-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'
+              + '</button>'
+              + '<div class="ac-bio' + (isPlaceholderBio ? ' ac-bio-placeholder' : '') + '" data-bio>'
+              + '<div class="ac-bio-content" style="padding:0.75rem 0 0;font-size:0.8125rem;line-height:1.75;color:#475569;">'
+              + '<p style="margin:0;">' + coach.bio + '</p>'
+              + '</div></div>';
+            section.appendChild(card);
+          });
+        }
+
+        panel.appendChild(section);
+      });
+    }
+
+    // A bio this long (Les Eisenhart's 22-paragraph career alone clears it)
+    // reads poorly squeezed into a narrow grid column, so it earns the
+    // wide, two-column treatment instead. Short bios are unaffected.
+    const WIDE_BIO_PARAGRAPHS = 6;
+    // Collapsed height must match .ac-bio's CSS max-height (the peek amount).
+    const BIO_PEEK_HEIGHT = '3rem';
+    // Placeholder bios have nothing worth peeking at, so they collapse flush.
+    function collapsedBioHeight(bio) {
+      return bio.classList.contains('ac-bio-placeholder') ? '0px' : BIO_PEEK_HEIGHT;
+    }
+
+    function toggleAcBio(btn) {
+      const card    = btn.closest('[data-coach-card]');
+      const section = card.closest('.cat-section');
+      const bio     = card.querySelector('[data-bio]');
+      const chev    = btn.querySelector('.ac-chev');
+      const img     = card.querySelector('[data-coach-img]');
+      const open    = bio.classList.contains('is-open');
+
+      if (open) {
+        bio.classList.remove('is-open');
+        bio.style.maxHeight = collapsedBioHeight(bio);
+        // Delay shrinking the section back to its normal column width until
+        // the collapse animation (see .ac-bio's transition) finishes, so the
+        // layout doesn't snap narrow while the text is still visible.
+        setTimeout(() => section.classList.remove('cat-section-wide'), 400);
+      } else {
+        const isLong = bio.querySelectorAll('p').length > WIDE_BIO_PARAGRAPHS;
+        section.classList.toggle('cat-section-wide', isLong);
+        bio.classList.add('is-open');
+        bio.style.maxHeight = bio.scrollHeight + 'px';
+      }
+
+      chev.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+      if (img) {
+        img.style.width  = open ? '60px'  : '100px';
+        img.style.height = open ? '74px'  : '123px';
+      }
+    }
+
+    document.addEventListener('click', e => {
+      if (e.target.closest('.ac-toggle-btn')) return;
+      if (!e.target.closest('[data-coach-card]')) {
+        document.querySelectorAll('[data-coach-card]').forEach(card => {
+          const bio = card.querySelector('[data-bio]');
+          if (bio && bio.classList.contains('is-open')) {
+            bio.classList.remove('is-open');
+            bio.style.maxHeight = collapsedBioHeight(bio);
+            const section = card.closest('.cat-section');
+            if (section) setTimeout(() => section.classList.remove('cat-section-wide'), 400);
+            const chev = card.querySelector('.ac-chev');
+            if (chev) chev.style.transform = 'rotate(0deg)';
+            const img = card.querySelector('[data-coach-img]');
+            if (img) { img.style.width = '60px'; img.style.height = '74px'; }
+          }
+        });
+      }
+    });
+
+    // Initialize at year 2010
+    setYear(2010);
+  </script>
+
+</body>
+</html>

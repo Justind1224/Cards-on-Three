@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Tops in the County — TWHS Track &amp; Field Stories</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,400;1,700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
+
+    /* ── Nav link underline ── */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Article body typography ── */
+    .article-body {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 1.0625rem;
+      line-height: 1.85;
+      color: #1E293B;
+    }
+    .article-body p {
+      margin-bottom: 1.5rem;
+      text-indent: 2em;
+    }
+    .article-body p:first-of-type {
+      text-indent: 0;
+    }
+
+    /* ── Drop cap ── */
+    .article-body p:first-of-type::first-letter {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 4.5rem;
+      font-weight: 800;
+      color: #C0182A;
+      float: left;
+      line-height: 0.78;
+      margin-right: 0.1em;
+      margin-top: 0.1em;
+    }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      border-left: 4px solid #C0182A;
+      margin: 2.5rem 0;
+      padding: 1.25rem 1.75rem;
+      background: linear-gradient(135deg, #F8F9FB 0%, #EEF2FF 100%);
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+    .pull-quote blockquote {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      font-weight: 700;
+      color: #1B2A5E;
+      line-height: 1.5;
+      margin: 0 0 0.5rem 0;
+    }
+    .pull-quote cite {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748B;
+      font-style: normal;
+    }
+
+    /* ── Article section divider ── */
+    .section-rule {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 2.5rem 0;
+    }
+    .section-rule::before,
+    .section-rule::after {
+      content: ''; flex: 1; height: 1px; background: #E2E8F0;
+    }
+    .section-rule span {
+      color: #C0182A; font-size: 1rem;
+    }
+
+    /* ── Sidebar story links ── */
+    .story-link {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.875rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(27,42,94,0.07);
+    }
+    .story-link:hover { background: #F0F4FF; box-shadow: 0 2px 8px rgba(27,42,94,0.12); }
+    .story-link:active { background: #E8EDFF; }
+    .story-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 0.5rem; }
+    .story-link.active-story {
+      background: linear-gradient(135deg,#1B2A5E,#243575);
+      box-shadow: 0 4px 12px rgba(27,42,94,0.25);
+    }
+    .story-link.active-story .story-title { color: #fff; }
+    .story-link.active-story .story-meta { color: #94A3B8; }
+    .story-link.active-story .story-num { background: rgba(255,255,255,0.15); color: #fff; }
+    .story-link.story-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+      background: #F1F3F7;
+      box-shadow: none;
+    }
+
+    /* ── Footnote superscript ── */
+    sup {
+      color: #C0182A;
+      font-size: 0.65em;
+      font-weight: 700;
+      vertical-align: super;
+    }
+
+    /* ── Footer link ── */
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    /* ── Grain overlay ── */
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730; position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:76px;">
+      <a href="index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none; flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:56px; width:auto; filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+      </a>
+      <nav style="display:flex; align-items:center; gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; transition:color 0.15s;">Stories</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem; border-radius:0.375rem; background:#C0182A; color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(192,24,42,0.35);">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Article Hero ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 60%,#243575 100%); position:relative; overflow:hidden;">
+    <div style="position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3.5rem 1.5rem 3rem;">
+      <!-- Breadcrumb -->
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+        <a href="index.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <span style="color:#475569;font-size:0.8125rem;">›</span>
+        <a href="stories.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Stories</a>
+        <span style="color:#475569;font-size:0.8125rem;">›</span>
+        <span style="color:#CBD5E1;font-size:0.8125rem;">Tops in the County</span>
+      </div>
+      <!-- Category badge -->
+      <div style="display:inline-flex;align-items:center;gap:0.5rem;margin-bottom:1rem;padding:0.3rem 0.85rem;border-radius:999px;background:rgba(192,24,42,0.15);border:1px solid rgba(192,24,42,0.3);color:#F9A8B3;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+        Track History — Franklin County, 1940
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2.25rem,5vw,3.25rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.08;margin-bottom:1.25rem;">
+        Tops in the County
+      </h1>
+      <!-- Meta row -->
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(192,24,42,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="14" height="14" fill="none" stroke="#F9A8B3" viewBox="0 0 24 24" style="stroke-width:2;"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          </div>
+          <div>
+            <div style="color:#fff;font-size:0.875rem;font-weight:600;">Bill Darling</div>
+            <div style="color:#64748B;font-size:0.75rem;">Author</div>
+          </div>
+        </div>
+        <div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>
+        <div style="color:#94A3B8;font-size:0.8125rem;">Franklin County Championship · Worthington, Ohio · 1940</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Article + Sidebar ── -->
+  <main style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 4rem;">
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:3rem;align-items:start;">
+
+      <!-- ── Article Body ── -->
+      <article>
+        <div style="background:#fff;border-radius:0.875rem;padding:3rem 3.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);">
+
+          <div class="article-body">
+            <p>For the first half of the 20th century, Worthington High School, for the sake of athletics, did
+            not really belong to a conference, at least not in the classic sense. WHS did belong to a naturally
+            occurring "league" of schools who all had two things in common: size and geography. Worthington
+            was a Franklin County high school and, as such, focused on winning Franklin County
+            championships. The league functioned as a conference, in an age when many high schools, if not
+            most, didn't belong to one. This concept of county championships persists to this day, even outside
+            the framework of conferences, with championship track meets still held in at least ten counties
+            across Ohio, including Mahoning, Greene, Stark, Miami, and Ashtabula.<sup>1</sup> The Franklin County
+            "league" of the 1920s and 1930s consisted of smaller schools on the outskirts of the county which
+            were not part of the Columbus City League, whose schools, by enrollment, towered over their
+            fellow county brethren. The Franklin County league included, at various times, Worthington,
+            Grove City, Mifflin, Bexley, Groveport, Westerville, Upper Arlington, Canal Winchester, Dublin,
+            Gahanna and Hilliard (often referred to back then as "Hilliards").</p>
+
+            <p>Holding an informal conglomeration of schools together is a challenge. Demographics
+            change, communities and high schools grow at different rates, and new high schools are built.
+            Schools floated in and out of the "Franklin County League" with regularity. By 1940, Westerville
+            had grown to a population of 3,146, making it twice the size of Worthington, five times bigger than
+            Hilliard, and thirteen times bigger than Dublin. Westerville High School—the longstanding host
+            of the county track championship—subsequently phased out of the Franklin County League.
+            Worthington last competed in the Franklin County championship in 1950, dropping out one year
+            after joining the Mid-Six conference in the fall of 1949.</p>
+
+            <p>Tiny Mifflin High School joined the Franklin County league in the 1930s from an area
+            northeast of the airport, which was originally rural enough to justify the school's nickname of the
+            "Cowpunchers." By the late 1960s, however, the city of Columbus had expanded in, around, and
+            beyond the school's Agler Road location. Mifflin—once its own rural school district—
+            subsequently joined the Columbus City League and, perhaps not coincidentally, shortened their
+            name to just the "Punchers." For the record, the Franklin County Track and Field Championships,
+            which dated back to at least 1907, was contested for the final time on May 3, 1968, and won
+            handily by the Indians of Canal Winchester.</p>
+
+            <p>Heading into the 1940 season, the Worthington track team hoped to accomplish one thing
+            which had forever eluded the Cardinals: winning the Franklin County championship. Runners-up
+            in 1926 and 1936, and having finished in the top three in six of the past eight seasons, Worthington
+            wished for it all in spring of 1940. Hoping to build off of their third place county finish the year
+            before, the 1940 season got off to a slow start for Ed Roush's track team. Beginning the season on
+            the road at Westerville, the Cardinals were defeated 71–53. While Worthington "held their own"
+            on the track, they were badly outscored in the field events, save for John Archer winning the discus
+            with a heave of 120', establishing a new school record.<sup>1</sup></p>
+
+            <p>The next week, the Cards headed to Canal Winchester and their fortunes turned. The
+            Worthington News—at no risk of understatement—reported that the boys "convincingly trounced,
+            whitewashed and defeated" Canal in their April tilt. The Cardinals took every event, save for the
+            220y hurdles and the pole vault. In the 220y dash, the News reported, colorfully, that Russell
+            Moore and Emerson Cabell had "(left) Winchester in the dust" and that they "nearly broke their
+            own record," presumably implying they had neared their personal bests. At meet's end, the
+            Cardinals had sped their way to a decisive 80–29 victory,<sup>1</sup>
+            giving everyone high hopes for better luck at the upcoming county meet.</p>
+
+            <p>On May 10, 1940, it was a cloudy, 60° day in Columbus, as the track teams from Mifflin,
+            Gahanna Lincoln, Canal Winchester, Grove City, Groveport and Worthington arrived at Ohio
+            Stadium for the Franklin County Championship.<sup>2</sup> Gahanna was looking to duplicate their 1939
+            victory, which they took by more than 20 points over second-place Canal.<sup>3</sup>
+            In the early field events, John Archer got the squad off to a solid start by finishing second in the discus. Russell Moore and
+            Emerson Cabell went 2–3 in the long jump, Pete Fields was fourth in the shot put, and Eddie
+            McCall grabbed one point for Worthington with a fifth place finish in the high jump.<sup>4</sup> Not usually
+            a strength of the team, the field events had scored enough points to give their runners a chance.</p>
+          </div>
+
+          <div class="article-body">
+            <p>Without question, Worthington's strength that day came in the sprints. Russ Moore was a
+            two-time county champion, winning the 100y dash and, with Emerson Cabell, mustering a 1–2
+            finish for the Cardinals in the 220y dash. Bob Jackson ran 53.8 to win the quarter mile with Bob
+            Fuller tacking on two more points with his fourth place finish. But the Cardinals shone the brightest
+            in the relays. The 880y relay of Moore, Cabell, Jim Maxwell and Frank Warbington won in 1:38.8,
+            a new county record. Holding a slight team lead going into the mile relay—the final event—the
+            squad of Jackson, Maxwell, Paul Wood and Bob Fuller finished the meet off in style, winning in a
+            time of 3:49.7, also a new county meet standard. In the end, it was enough. With 59 points, to 52½
+            for Grove City, the 1940 track team indeed made history, becoming the first Worthington team to
+            be crowned Franklin County track champions. Russell Moore was lauded as the individual high
+            point scorer, totaling 17½ to lead the Cardinals to victory.</p>
+
+            <p>Worthington High held an end-of-year celebration assembly for their sports teams. Coach
+            Roush gave captain Russ Moore the county championship trophy who, in turn, handed it over to
+            superintendent H.C. McCord—the former track coach—for safekeeping. Track and field joined
+            basketball and golf as Franklin county champions for the 1939–1940 school year. Then, as was
+            custom, "The entire school sang 'Stand Up and Cheer,' the school song, as the closing number on
+            the Recognition Day program of 1940." The Worthington News extolled:</p>
+          
+
+            <!-- Pull Quote #1 -->
+          <div class="pull-quote">
+            <blockquote>"Roses to our track team and to Mr. Roush for his excellent work with them. It again placed our school on the map."</blockquote>
+            <cite>— The Worthington News, 1940</cite>
+          </div>
+          
+            <p>Unfortunately, "the map" did not show the team or any of its athletes the route to the
+            District Championship held the following Saturday at Ohio Wesleyan. The Cardinals took all the
+            joy and momentum from their historic county title—and called it a season, choosing to not extend
+            the season beyond the county meet. The News reported that the county championship, "(Was) a
+            fitting climax to the athletic activities of our local schools during the past two years."<sup>1</sup>
+            In the absence of the county champions, the district title was won the next week by rival Upper
+            Arlington.<sup>6</sup> The week after that, the state championship trophy was claimed in convincing fashion
+            by Woodrow Wilson High School out of Xenia, although they were referred to in the results as
+            "Xenia OSSO," an acronym which stood for The Ohio Sailors' and Soldiers' Orphans Home. It
+            was the first of three consecutive state championships for Xenia OSSO.<sup>1</sup></p>
+          </div>
+
+          <div class="section-rule"><span>&#8213;</span></div>
+
+          <!-- Emerson Cabell section -->
+          <div style="margin-bottom:1.5rem;">
+            <div style="display:inline-flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;padding:0.25rem 0.75rem;border-radius:999px;background:rgba(27,42,94,0.08);color:#1B2A5E;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Inter',sans-serif;">
+              Profile: Emerson Cabell
+            </div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.02em;line-height:1.2;">
+              "What All Athletic Coaches Dream About"
+            </h2>
+          </div>
+
+          <div class="article-body">
+            <p>One of the true stars of the 1940 county championship team was sprinter Emerson Cabell.
+            In truth, Emerson Cabell was simply one of the best athletes to ever attend Worthington High
+            School up to that point. As the Worthington News wrote in 1940, "Emerson Cabell is what all
+            athletic coaches dream about."<sup>1</sup> As a sophomore in 1938, he finished fourth at the Franklin County
+            meet in the long jump. In the spring, he was county champion in the 220y dash, and he picked up
+            a second county title in the 880y relay as a senior, helping the Cardinals toward their breakthrough
+            team victory. Cabell's best days at Worthington, however, were in the autumns as a running back
+            on the Cardinals football team. In his junior year, he helped lead Worthington to their first county
+            championship in football. During his senior year he scored decisive touchdowns in victories over
+            Groveport, Bremen, and University High, and was named second-team All-Franklin County by the
+            Columbus Dispatch. By any measure, Emerson Cabell should have been a big-time college football
+            recruit. His options for playing in college, however, were limited. They were limited by two factors
+            he couldn't do anything about: It was 1940, and Emerson Cabell was black.</p>
+
+            <p>He couldn't play for any of the traditional football powers in the south, such as Alabama,
+            Georgia or Tennessee; they had rules against black students and black players. Ohio State—well
+            above the Mason-Dixon Line—didn't have any rules against black players; they just didn't have
+            any black players. The Buckeyes hadn't had a black player on their roster since 1931, when a
+            young man named William Bell out of Akron had been named second-team all-Big Ten.<sup>1</sup>
+            So, Emerson Cabell chose a path familiar to many black athletes at the time and enrolled at an
+            all-black college, most of which were located in the south. In the fall of 1940, Cabell—along with
+            high school teammate Harold Jones—chose to play football for the Rattlers of Florida A&amp;M.</p>
+
+            <p>Showing up on campus in Tallahassee in the fall of 1940, Cabell was a long way from
+            home, but he was not alone. In addition to his friend and classmate from Worthington, the roster
+            at A&amp;M was chock full of talented athletes from the state of Ohio. Over half the starting lineup for
+            the Rattlers were Ohioans, including players from Grove City, Delaware, Steubenville, Sandusky,
+            Akron and Columbus. And while Ohio State went the entire decade of the 1930s without once
+            finishing in the top 10, Florida A&amp;M—buoyed by a pipeline of Ohio talent—won three national
+            championships between 1937 and 1942, the national championship of "Negro College Football"
+            as voted on by black newspapers across the country.</p>
+          </div>
+
+
+          <div class="article-body">
+            <p>Slotted in as a fullback and part-time defensive player, Emerson Cabell did not play until
+            his sophomore year. That 1941 season was highlighted for Cabell by a 38-yard scamper to put the
+            finishing touches on a late-season, decisive win over previously unbeaten Lane College.<sup>1</sup>
+            In amassing eight wins against only one defeat, Florida A&amp;M was awarded the 1941 national
+            championship. It was their second national championship in the last three years.</p>
+
+            <p>Their celebration, however, was short-lived. Another reason many young men chose
+            Florida A&amp;M—in addition to the chance to play for William Bell—was the vibrant ROTC program
+            on the A&amp;M campus. With the storm clouds of war forming in the distance, and military service a
+            near certainty for young men of this era, college ROTC programs allowed students to defer
+            service for a year or two, and to ultimately enter the military with higher rankings and better pay.</p>
+
+            <p>By the summer of 1942, the Rattler run of dominance was over. It was ended, not by another
+            team, but by World War II. In an article in the Jackson (MS) Advocate, A.L. Kidd wrote:
+            
+            <!-- Pull Quote #2 -->
+          <div class="pull-quote">
+            <blockquote>"In spite of the jubilance of Rattler supporters, and the satisfaction felt by the administration, and the coaching staff of the college, there is gloom in the Rattlers’ camp as they see this championship organization slowly disintegrating, what with graduation and Uncle Sam’s ‘call to arms,’ taking them away by ones, twos and threes, day after day, leaving to the coaches the stupendous task of starting from scratch come September 1942. <sup>1</sup></blockquote>
+            <cite>— A.L. Kidd, Jackson (MS) Advocate, 1942</cite>
+          </div>
+            
+            The war came calling for Emerson Cabell, and for a large percentage
+            of his teammates on the A&amp;M football team. Cabell enlisted in the Army, and one of the first
+            things he came to learn upon entry was that the United States Army didn't particularly care that
+            he preferred to be called by his middle name of Emerson, so for the rest of his military service—
+            and the rest of his professional career—he was known as Clarence Cabell.</p>
+
+            <p>Following his war service, Clarence Cabell found himself honorably discharged in
+            beautiful, sunny, southern California. With two years of college yet to finish—and eligibility left
+            if he wanted to use it—he proved once and for all he was big time by playing his last two years
+            of college football for UCLA. Heavier than in his pre-war days, Cabell converted, reluctantly, to
+            tackle and was part of a Bruins squad that went 5–4 overall, capped by an impressive 39–6 road
+            victory over nationally ranked Stanford. A season highlight surely must have been a trip to Wrigley
+            Field in Chicago to play Northwestern, giving his parents—who had moved from Worthington to
+            Indiana—the chance to see him play for the Bruins, in person.</p>
+
+            <p>Following his college days, Clarence Cabell even played a year of professional football.
+            Unfortunately, he did not play for California's glamorous NFL team, the Los Angeles Rams, but
+            rather for the cash-strapped Long Beach Bulldogs in what turned out to be the final season of the
+            Pacific Coast Professional Football League. He was happy to be back playing running back, but
+            the league was troubled. By 1948, the PCPFL was down to just five teams: the Bulldogs, the Salt
+            Lake Seagulls, the Honolulu Warriors, the San Francisco Clippers and the Hollywood Bears.
+            Navigating league-wide financial difficulties—including the Salt Lake franchise folding
+            completely—Long Beach did manage to go 6–1 and were crowned PCPFL champions for 1948.
+            An All-Star game of sorts was held in Hawaii in early January, which served as the final hurrah
+            for the Pacific Coast Professional Football League, when a collection of players from the stateside
+            teams outlasted the Honolulu Warriors 17–14.</p>
+
+            <p>Putting football to the side, Mr. Cabell took a public sector job and worked for Los Angeles
+            County for the next 38 years. Beginning as a juvenile counselor, Cabell held various jobs including
+            working his way up to being one of the higher-ups in the county probation department. In 1970, the
+            County Clerk, William Sharp, appointed Mr. Cabell to be the chief deputy county clerk for Los
+            Angeles County. And the truth is, that should have been the end of the story for Clarence Cabell.
+            But this is Hollywood, and in Hollywood, there is always a plot twist.</p>
+
+            <p>In December of 1972, Mr. Sharp announced his resignation. Clarence Cabell thought he
+            would like the position, so he threw his hat in the ring. After scoring the best of the three potential
+            candidates on the civil service examination, and acing the corresponding interview, Clarence
+            Cabell was appointed by the County Board of Supervisors to be Los Angeles County's newest
+            county clerk.</p>
+
+            <p>Being a county clerk is a big deal. But being county clerk of Los Angeles County is a very
+            big deal, because Los Angeles County is a very big county. Los Angeles County is, by population,
+            the biggest county in the United States, by far. The second largest county in the United States is
+            Cook County in Chicago, with a population of approximately 5 million people, making it
+            roughly half the size of Los Angeles County. If Los Angeles County was a state, it would be the
+            12th largest state in the union. In his position, Cabell headed up a department of nearly 900 deputy
+            clerks. Cabell served as county clerk from 1973 until his retirement in 1976 and was given high
+            marks for his tenure in office.<sup>1</sup></p>
+
+            <p>The wrinkle in this story, however, surrounds the reason why the county clerk position was
+            ever open to him in the first place. Why had William Sharp resigned? The truth is, Clarence Cabell
+            probably would have never been Los Angeles County clerk had it not been for the assassination of
+            Bobby Kennedy. In early June of 1968, on the day of the California primary, presidential candidate
+            Robert F. Kennedy was assassinated by gunman Sirhan Sirhan at the Ambassador Hotel in Los
+            Angeles. In 1969, Sirhan was tried, convicted and sentenced to death—a sentence that was later
+            commuted to life in prison when California outlawed the death penalty.</p>
+
+            <p>About a year after the trial, books started to come out about the Robert Kennedy
+            assassination and the trial of Sirhan Sirhan. The authors—hoping to boost book sales—shared in
+            publicity interviews that they had been given unprecedented access to the evidence by the county
+            clerk, William Sharp. They had been allowed access to the evidence, in contradiction to the rules
+            of the county clerk's office and the specific orders of the judge in the case. Speculation was that
+            Mr. Sharp was hoping to parlay the Kennedy assassination into a close relationship with Hollywood
+            writers, who knew Hollywood producers, who made Hollywood movies. Mr. Sharp, it seems, was
+            hoping that the Kennedy case could propel him out of the stuffy office building on Imperial
+            Highway in Norwalk, and on to the backlot at Warner Brothers.</p>
+
+            <p>Sirhan Sirhan is still alive, and still filing appeals. The only time he ever had any chance
+            on appeal was when it came to light that the county clerk was letting Hollywood writers have their
+            way with the evidence the state had used to convict him. The authors later backtracked a bit on
+            their claims, and Sharp attempted to deny wrongdoing. A grand jury was summoned, and though
+            they opted not to indict the county clerk for his misdeeds, the damage was done. After nearly
+            torpedoing one of the state's highest profile cases, William Sharp finally gave in to mounting
+            public pressure and resigned, opening the door for 1940 Worthington graduate—and Franklin
+            County sprint champion—Clarence Emerson Cabell to become the first Black county clerk, not
+            just in the history of Los Angeles County, but in the history of the state of California.</p>
+
+            <p>One might wonder whatever happened to William Bell, the kid from Akron, the last Black
+            player at Ohio State. Well, after his college days, William Bell got into coaching—he was the
+            head football coach of the Rattlers of Florida A&amp;M. In addition to coaching football at A&amp;M,
+            he also served as Athletic Director and as the Chairman of the Physical Education Department.
+            During World War II he served as the head of physical training and the football coach at the
+            Tuskegee Army Airfield. After the war, he was head coach and Athletic Director at North Carolina
+            A&amp;T, Associate Dean of Students at Iowa State and, ultimately, finished his career as the A.D.
+            at Fayetteville State University. Along the way he earned master's and doctoral degrees from OSU,
+            and is credited with being the first Black player in Ohio State history. In 1980, in an honor long
+            overdue, William Bell was inducted into the Ohio State University Athletic Hall of Fame.</p>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- ── Sidebar ── -->
+      <aside style="position:sticky;top:80px;">
+
+        <!-- Stories list -->
+        <div style="background:#fff;border-radius:0.875rem;padding:1.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid #EEF0F5;">
+            <div style="width:3px;height:18px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.0625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.01em;margin:0;">More Stories</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <a href="stories.html" class="story-link active-story">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#C0182A;color:#fff;font-size:0.6875rem;font-weight:700;flex-shrink:0;">1</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;line-height:1.35;margin-bottom:0.2rem;">Tops in the County</div>
+                <div class="story-meta" style="font-size:0.7125rem;">Franklin County, 1940</div>
+              </div>
+            </a>
+            <a href="#" class="story-link story-disabled">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#EEF0F5;color:#64748B;font-size:0.6875rem;font-weight:700;flex-shrink:0;">2</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Story 2</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Coming soon</div>
+              </div>
+            </a>
+            <a href="#" class="story-link story-disabled">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#EEF0F5;color:#64748B;font-size:0.6875rem;font-weight:700;flex-shrink:0;">3</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Story 3</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Coming soon</div>
+              </div>
+            </a>
+            <a href="#" class="story-link story-disabled">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#EEF0F5;color:#64748B;font-size:0.6875rem;font-weight:700;flex-shrink:0;">4</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Story 4</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Coming soon</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- About the author -->
+        <div style="background:#fff;border-radius:0.875rem;padding:1.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);">
+          <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:1rem;">
+            <div style="width:3px;height:18px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.0625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.01em;margin:0;">About the Author</h2>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.875rem;">
+            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1B2A5E,#C0182A);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;">BD</span>
+            </div>
+            <div>
+              <div style="font-size:0.875rem;font-weight:600;color:#1E293B;">Bill Darling</div>
+              <div style="font-size:0.75rem;color:#64748B;">TWHS Track Coach</div>
+            </div>
+          </div>
+          <p style="font-size:0.8125rem;color:#475569;line-height:1.7;margin:0;">Historian and archivist of the Worthington and Thomas Worthington track &amp; field program, documenting its history from the early 20th century to the present.</p>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
