@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Gallery — TWHS Track &amp; Field</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+
+    /* ── Controls bar ── */
+    .controls {
+      background: #fff; border-radius: 0.875rem;
+      box-shadow: 0 2px 12px rgba(27,42,94,0.08), 0 6px 24px rgba(27,42,94,0.05);
+      padding: 0.875rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.875rem;
+    }
+
+    /* Caption switch. Captions are OFF on load — the gallery reads as plain
+       photographs first, and text is something you opt into. */
+    .switch {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: none; border: none; cursor: pointer; padding: 0.3rem;
+      font-family: 'Inter', sans-serif; font-size: 0.8125rem; font-weight: 600;
+      color: #64748B; border-radius: 0.4rem;
+      transition: color 0.15s ease;
+    }
+    .switch:hover { color: #1B2A5E; }
+    .switch:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; }
+    .switch:active .switch-track { transform: scale(0.95); }
+    .switch-track {
+      width: 38px; height: 22px; border-radius: 999px; background: #CBD5E1;
+      position: relative; flex-shrink: 0;
+      transition: background-color 0.22s ease, transform 0.12s ease;
+    }
+    .switch-thumb {
+      position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+      border-radius: 50%; background: #fff;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.35);
+      transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .switch[aria-pressed="true"] { color: #C0182A; }
+    .switch[aria-pressed="true"] .switch-track { background: #C0182A; }
+    .switch[aria-pressed="true"] .switch-thumb { transform: translateX(16px); }
+
+    /* ── Section header ──
+       A quiet label on a hairline rule. Deliberately small: it should mark a
+       break in the grid without claiming a band of the page for itself. */
+    .sec-head {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin: 2.5rem 0 1rem;
+    }
+    .sec-head:first-child { margin-top: 0; }
+    .sec-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6875rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: #94A3B8; white-space: nowrap;
+    }
+    .sec-rule { flex: 1; height: 1px; background: linear-gradient(90deg, #E2E8F0, rgba(226,232,240,0)); }
+
+    /* ── Masonry grid ── */
+    .masonry { column-count: 3; column-gap: 1.25rem; }
+    @media (max-width: 900px) { .masonry { column-count: 2; } }
+    @media (max-width: 560px) { .masonry { column-count: 1; } }
+
+    /* Team photographs are wide group shots. At a third of the width nobody in
+       the back row is identifiable and a printed roster caption is unreadable,
+       so that section tiles two-up. Set `wide: false` on the section to opt out
+       and fall back to the standard three columns. */
+    .masonry-wide { column-count: 2; }
+    @media (max-width: 900px) { .masonry-wide { column-count: 1; } }
+
+    .tile {
+      break-inside: avoid; margin-bottom: 1.25rem;
+      background: #fff; border-radius: 0.75rem; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(27,42,94,0.07), 0 5px 20px rgba(27,42,94,0.04);
+      display: block; width: 100%; padding: 0; border: none; text-align: left;
+      cursor: zoom-in; font-family: 'Inter', sans-serif;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.3s ease;
+    }
+    .tile:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(27,42,94,0.12), 0 14px 36px rgba(27,42,94,0.09);
+    }
+    .tile:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; }
+    .tile:active { transform: translateY(-1px); }
+
+    .tile-frame { position: relative; overflow: hidden; line-height: 0; }
+    .tile-frame img {
+      width: 100%; height: auto; display: block;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .tile:hover .tile-frame img { transform: scale(1.035); }
+    /* Two stacked treatments: a navy multiply wash that unifies a set of
+       photos shot decades apart, and a bottom scrim so the hover year chip
+       stays readable over a bright frame. Both lift on hover. */
+    .tile-wash {
+      position: absolute; inset: 0; background: #1B2A5E;
+      mix-blend-mode: multiply; opacity: 0.1; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .tile:hover .tile-wash { opacity: 0; }
+    .tile-scrim {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(to top, rgba(13,23,48,0.6) 0%, rgba(13,23,48,0) 42%);
+      opacity: 0; transition: opacity 0.35s ease;
+    }
+    .tile:hover .tile-scrim, .tile:focus-visible .tile-scrim { opacity: 1; }
+    .tile-year {
+      position: absolute; left: 0.75rem; bottom: 0.7rem; z-index: 2;
+      font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.06em;
+      color: #fff; text-transform: uppercase; pointer-events: none;
+      opacity: 0; transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .tile:hover .tile-year, .tile:focus-visible .tile-year { opacity: 1; transform: translateY(0); }
+
+    /* Caption block: collapsed to nothing unless captions are switched on. */
+    .tile-caption {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .captions-on .tile-caption { max-height: 340px; }
+    .tile-caption-inner { padding: 0.85rem 1rem 1rem; border-top: 1px solid #EEF0F5; }
+
+    .tile-title {
+      font-family: 'Playfair Display', serif; font-size: 0.9375rem; font-weight: 700;
+      color: #1B2A5E; letter-spacing: -0.02em; line-height: 1.3; margin-bottom: 0.2rem;
+    }
+    .tile-meta { font-size: 0.75rem; font-weight: 600; color: #C0182A; margin-bottom: 0.4rem; }
+    .tile-note { font-size: 0.8125rem; line-height: 1.7; color: #475569; margin: 0; }
+
+    /* ── Lightbox ── */
+    .lb {
+      position: fixed; inset: 0; z-index: 100;
+      /* Blurred as well as darkened: at plain 93% the white tiles behind still
+         read through clearly enough to compete with the caption text. */
+      background: rgba(8, 14, 32, 0.95);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .lb.is-open { opacity: 1; pointer-events: auto; }
+    .lb-stage {
+      max-width: 1100px; width: 100%; max-height: 100%;
+      display: flex; flex-direction: column; align-items: center; gap: 1rem;
+      transform: scale(0.97); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .lb.is-open .lb-stage { transform: scale(1); }
+    .lb-img {
+      max-width: 100%; max-height: 72vh; width: auto; height: auto;
+      border-radius: 0.5rem; display: block;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+    }
+    .lb-panel {
+      max-width: 680px; width: 100%; text-align: center;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .lb-panel.is-open { max-height: 280px; overflow-y: auto; }
+    .lb-title {
+      font-family: 'Playfair Display', serif; font-size: 1.0625rem; font-weight: 700;
+      color: #fff; letter-spacing: -0.02em; margin-bottom: 0.2rem;
+    }
+    .lb-meta { font-size: 0.75rem; font-weight: 600; color: #F9A8B3; margin-bottom: 0.5rem; }
+    .lb-note { font-size: 0.8125rem; line-height: 1.75; color: #CBD5E1; margin: 0; }
+
+    .lb-btn {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.16);
+      color: #fff; border-radius: 0.5rem; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      font-family: 'Inter', sans-serif; font-size: 0.8125rem; font-weight: 600;
+      padding: 0.45rem 0.8rem;
+      transition: background-color 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+    }
+    .lb-btn:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3); }
+    .lb-btn:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; }
+    .lb-btn:active { transform: scale(0.95); }
+    .lb-btn[aria-pressed="true"] {
+      background: #C0182A; border-color: #C0182A;
+      box-shadow: 0 2px 10px rgba(192,24,42,0.45);
+    }
+
+    /* .lb-btn sets display:inline-flex, which would otherwise win over the
+       hidden attribute and leave the button on screen. */
+    .lb-btn[hidden] { display: none; }
+
+    .lb-close { position: absolute; top: 1.1rem; right: 1.25rem; width: 38px; height: 38px; padding: 0; }
+    .lb-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 44px; padding: 0;
+    }
+    .lb-nav:active { transform: translateY(-50%) scale(0.92); }
+    .lb-prev { left: 1.25rem; }
+    .lb-next { right: 1.25rem; }
+    .lb-count {
+      font-size: 0.75rem; font-weight: 600; color: #64748B;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    @media (max-width: 560px) {
+      .lb-prev { left: 0.4rem; } .lb-next { right: 0.4rem; }
+      .lb-img { max-height: 58vh; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:86px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:0.75rem;text-decoration:none;flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x_trimmed.png" alt="TWHS Cardinals" style="height:70px;width:auto;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+      </a>
+      <nav style="display:flex;align-items:center;gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Stories</a>
+        <a href="gallery.html" class="nav-link" style="color:#fff;font-size:0.875rem;font-weight:600;text-decoration:none;transition:color 0.15s;">Gallery</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1;font-size:0.875rem;font-weight:500;text-decoration:none;transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem;border-radius:0.375rem;background:#C0182A;color:#fff;font-size:0.875rem;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(192,24,42,0.35);">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 60%,#243575 100%);position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3rem 1.5rem 2.75rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <a href="index.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <span style="color:#475569;font-size:0.8125rem;">&#x203A;</span>
+        <span style="color:#CBD5E1;font-size:0.8125rem;">Gallery</span>
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.75rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;">
+        Photo Gallery
+      </h1>
+      <p style="color:#94A3B8;font-size:0.9375rem;line-height:1.7;max-width:560px;">
+        Cardinal track &amp; field through the lens — coaches, athletes, and race-day moments. Click any photo to view it full size, or switch on captions to read about what you're looking at.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Main ── -->
+  <main style="max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem 4rem;">
+
+    <!-- Controls -->
+    <div class="controls" style="margin-bottom:1.75rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0182A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span style="font-size:0.8rem;color:#64748B;"><span id="photo-count"></span> photographs &middot; click any image to enlarge</span>
+      </div>
+      <button id="caption-switch" class="switch" type="button" aria-pressed="false" aria-controls="gallery-sections">
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        <span id="caption-switch-label">Show captions</span>
+      </button>
+    </div>
+
+    <!-- Sections, each with its own grid -->
+    <div id="gallery-sections"></div>
+
+  </main>
+
+  <!-- ── Lightbox ── -->
+  <div id="lightbox" class="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="lb-btn lb-close" id="lb-close" type="button" aria-label="Close viewer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="lb-btn lb-nav lb-prev" id="lb-prev" type="button" aria-label="Previous photo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="lb-btn lb-nav lb-next" id="lb-next" type="button" aria-label="Next photo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
+    <div class="lb-stage">
+      <img id="lb-img" class="lb-img" src="" alt="" />
+      <div style="display:flex;align-items:center;gap:0.875rem;">
+        <button id="lb-info" class="lb-btn" type="button" aria-pressed="false" aria-controls="lb-panel">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>About this photo</span>
+        </button>
+        <span class="lb-count" id="lb-count"></span>
+      </div>
+      <div id="lb-panel" class="lb-panel">
+        <div style="padding:0.25rem 0 0.5rem;">
+          <div class="lb-title" id="lb-title"></div>
+          <div class="lb-meta" id="lb-meta"></div>
+          <p class="lb-note" id="lb-note"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+            <li><a href="gallery.html" class="footer-link">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Photo data ───────────────────────────────────────────────────────────
+       Add a photo by dropping the file in images/ and appending an entry here.
+
+         src      path to the image
+         alt      plain description, for screen readers and if the file 404s
+         title    short caption line
+         meta     the small red line under the title (year, meet, role…)
+         note     the longer annotation; shown with captions on / in the viewer
+         year     the chip that fades in over the photo on hover
+         section  which group it files under — see SECTIONS below
+
+       Any field can be left as an empty string — it is simply not rendered.
+       A photo with no title, meta, or note shows no "About this photo" button
+       in the viewer, since there would be nothing behind it.
+
+       Order within a section follows the order of this array. A section with
+       no photos is skipped entirely, header and all.
+    ─────────────────────────────────────────────────────────────────────────── */
+    const SECTIONS = [
+      { id: 'coaches',  label: 'Coaches' },
+      { id: 'teams',    label: 'Team Photos', wide: true },
+      { id: 'athletes', label: 'Athletes' },
+    ];
+
+    const PHOTOS = [
+      // ── Athletes ──
+      // Names only, as confirmed. Nothing here is inferred from the photograph
+      // itself; fill in meta/note/year as the details become known.
+      {
+        src: 'images/banner (1).webp',
+        section: 'athletes',
+        alt: 'Kainnan Ramsey running with a baton for Thomas Worthington, runners from other schools alongside.',
+        title: 'Kainnan Ramsey',
+        meta: '', note: '', year: ''
+      },
+      {
+        src: 'images/justin_braun.webp',
+        section: 'athletes',
+        alt: 'Justin Braun running for Thomas Worthington with both arms outstretched, other runners behind.',
+        title: 'Justin Braun',
+        meta: '', note: '', year: ''
+      },
+      {
+        src: 'images/justin_braun 2.webp',
+        section: 'athletes',
+        alt: 'Justin Braun running with a baton for Thomas Worthington at an evening meet.',
+        title: 'Justin Braun',
+        meta: '', note: '', year: ''
+      },
+      {
+        src: 'images/banner (2).webp',
+        section: 'athletes',
+        alt: 'Arjun Jha running for Thomas Worthington with both arms raised, holding a baton overhead.',
+        title: 'Arjun Jha',
+        meta: '', note: '', year: ''
+      },
+      {
+        src: 'images/carina napoleon.webp',
+        section: 'athletes',
+        alt: 'Carina Napoleon running for Worthington, ahead of a group of runners on a track.',
+        title: 'Carina Napoleon',
+        meta: '', note: '', year: ''
+      },
+      {
+        src: 'images/galleryPhotos/Ernie Vercoe 440 1959.png',
+        section: 'athletes',
+        alt: 'Ernie Vercoe in a Worthington singlet straining at the finish of a night race, with runners from Cleveland West and Harding beside him.',
+        title: 'Ernie Vercoe',
+        meta: '440-yard dash · 1959',
+        note: 'Ernie Vercoe, Worthington’s quarter-mile ace, staves off late challenges by Cleveland West’s Jim Bryson and Harding’s Mike Chamberlain in the 440-yard dash at the Marion Relays. The Worthington sprinter was clocked at 51.8 seconds in his winning effort. — The Marion Star, May 2, 1959',
+        year: '1959'
+      },
+      {
+        src: 'images/galleryPhotos/Neil Green Long Jump 2000.png',
+        section: 'athletes',
+        alt: 'Neil Green in a Worthington singlet at the top of a long jump, arms flung back and head tilted skyward against an overcast sky.',
+        title: 'Neil Green',
+        meta: 'Long jump · 2000',
+        note: 'Photo by Joy Parker.',
+        year: '2000'
+      },
+      {
+        src: 'images/galleryPhotos/Waters Mile Relay 2000.png',
+        section: 'athletes',
+        alt: 'T’Nita Waters running a relay leg with a baton, alone on the track in a Worthington singlet.',
+        title: 'T’Nita Waters',
+        meta: '1,600-meter relay · 2000',
+        note: 'T’Nita Waters of the Cardinals girls’ track and field team ran an important leg at the district 1,600-meter relay, helping the TWHS quartet win in 4:05.8 and advance to the regional meet at Dublin Coffman. — News photo by Michael Alwood',
+        year: '2000'
+      },
+      {
+        src: 'images/galleryPhotos/Pentak Evans 2003 3200m relay.png',
+        section: 'athletes',
+        alt: 'Two Worthington runners completing a baton exchange on the track, the incoming runner wearing bib 514.',
+        title: 'Pentak & Evans',
+        meta: '3,200-meter relay · 2003',
+        note: '',
+        year: '2003'
+      },
+      {
+        src: 'images/galleryPhotos/Christine Barren at Fulton 2005.png',
+        section: 'athletes',
+        alt: 'Christine Barren running with a baton in a Worthington singlet, a trailing runner blurred behind her.',
+        title: 'Christine Barren',
+        meta: 'Fulton · 2005',
+        note: 'News photo by Nat Lathy.',
+        year: '2005'
+      },
+      {
+        src: 'images/galleryPhotos/Birmingham and Doss 2005.jpeg',
+        section: 'athletes',
+        alt: 'Two athletes lying on the ground in warm-up suits with their legs propped straight up against a painted brick wall.',
+        title: 'Birmingham & Doss',
+        meta: '2005',
+        note: '',
+        year: '2005'
+      },
+      {
+        src: 'images/galleryPhotos/Kelsey McHugh at State 2005.png',
+        section: 'athletes',
+        alt: 'Kelsey McHugh sitting on the infield grass after a race, knees drawn up, holding a paper cup.',
+        title: 'Kelsey McHugh',
+        meta: 'State meet · 2005',
+        note: 'Photo by Lorrie Cecil / ThisWeek.',
+        year: '2005'
+      },
+      {
+        src: 'images/galleryPhotos/Molly Beckwith at State 2005.png',
+        section: 'athletes',
+        alt: 'Molly Beckwith running in a Worthington singlet and red shorts on a red track.',
+        title: 'Molly Beckwith',
+        meta: 'State meet · 2005',
+        note: 'Photo by Joy Parker / ThisWeek.',
+        year: '2005'
+      },
+      // Added from the story pages. Notes are sourced from "Here Ends His Long
+      // Walk" and "The Greatest Race"; nothing is inferred from the images.
+      {
+        src: 'images/storyPhotos/Paul Mally.jpeg',
+        section: 'athletes',
+        alt: 'Studio portrait of Paul Mally in a suit and tie.',
+        title: 'Paul Mally',
+        meta: 'Class of 1952',
+        note: 'Won both hurdle races in the Cardinals’ 1952 season opener at Willis High School, and finished fourth in the 120y hurdles at the state meet.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/Dan Stevens.png',
+        section: 'athletes',
+        alt: 'Yearbook portrait of Dan Stevens, smiling, in a suit and patterned tie.',
+        title: 'Dan Stevens',
+        meta: '', note: '', year: ''
+      },
+      {
+        src: 'images/storyPhotos/Jack Bartley DJ.png',
+        section: 'athletes',
+        alt: 'Publicity portrait of Jack Bartley from his country music and disc jockey years.',
+        title: 'Jack Bartley',
+        meta: 'Class of 1952',
+        note: 'The 1952 district champion in the pole vault, who spent that autumn recovering from a gunshot wound. He later fronted country bands across Ohio and was named Ohio Country Music DJ of the Year in 1971.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/David Bobrovnikoff.png',
+        section: 'athletes',
+        alt: 'Senior portrait of David Bobrovnikoff in glasses, a suit and a striped tie.',
+        title: 'David Bobrovnikoff',
+        meta: 'Class of 1953',
+        note: 'A junior distance runner who lettered in the spring of 1952. He became a pathology professor at UCLA and deputy coroner for Los Angeles County — under the name David Dixon Porter.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/Jack Blackburn.jpeg',
+        section: 'athletes',
+        alt: 'Jack Blackburn in a Worthington track sweatshirt with the winged-foot emblem.',
+        title: 'Jack Blackburn',
+        meta: 'Class of 1954',
+        note: 'Mid-Six mile champion as a sophomore in 1952, and in 1953 the first Worthington runner to win an OHSAA state cross country title. He later finished fourth in the 50km racewalk at the 1960 U.S. Olympic Trials.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/Lydia Miller.jpeg',
+        section: 'athletes',
+        alt: 'Lydia Miller running in a Lipscomb University singlet at the Atlantic Sun Conference Championship.',
+        title: 'Lydia Miller',
+        meta: 'Lipscomb University',
+        note: 'Led off the 2019 state championship 4x800m relay in 2:18, the best 800m of her life. At Lipscomb she became the first female cross country All-American in school history.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/Morgan Edwards.jpeg',
+        section: 'athletes',
+        alt: 'Morgan Edwards running in a navy John Carroll University singlet, bib number 16.',
+        title: 'Morgan Edwards',
+        meta: 'John Carroll University',
+        note: 'Ran the second leg of the 2019 state championship 4x800m relay as a sophomore — a personal-best 2:22 in only her second varsity 4x8.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/Carina Napoleon.png',
+        section: 'athletes',
+        alt: 'Carina Napoleon smiling in an Ohio State University singlet, bib number 231.',
+        title: 'Carina Napoleon',
+        meta: 'Ohio State University',
+        note: 'Ran 2:08.3 on the third leg of the 2019 state championship 4x800m relay, then the fastest relay leg in school history. Indoor 800m state champion in 2020 and a seven-time state podium finisher.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/Gia Napoleon.jpeg',
+        section: 'athletes',
+        alt: 'Gia Napoleon running in an Ohio State University singlet, bib number 318.',
+        title: 'Gia Napoleon',
+        meta: 'Ohio State University',
+        note: 'Anchored the 2019 state championship 4x800m relay in 2:06.2, winning by .05 of a second. State champion in the 800m in 2017, in a school-record 2:07.47.',
+        year: ''
+      },
+      {
+        src: 'images/storyPhotos/Cassidy Shaver.jpeg',
+        section: 'athletes',
+        alt: 'Cassidy Shaver running in an Otterbein University singlet, bib number 1.',
+        title: 'Cassidy Shaver',
+        meta: 'Otterbein University',
+        note: 'Ran a career-best 2:20.5 on the 2018 state 4x800m relay that broke the school record. She went on to three podium finishes at the OAC championships for Otterbein.',
+        year: ''
+      },
+
+      // ── Coaches ──
+      {
+        src: 'images/lesEisenhart.png',
+        section: 'coaches',
+        alt: 'Portrait of a young Les Eisenhart in a sweatshirt, standing in an empty stadium.',
+        title: 'Les Eisenhart',
+        meta: 'Boys Head Coach · 1947–1981',
+        note: 'Eisenhart won the 880y state title out of Columbus North in 1937 in a record 1:58.6, then ran for Ohio State as an NCAA All-American and seven-time AAU national champion. He coached track at Worthington for 35 years and started the cross country program in 1947.',
+        year: '1947–1981'
+      },
+      {
+        src: 'images/coachPictures/Stolzenbach Photo Enhanced GPT.png',
+        section: 'coaches',
+        alt: 'Studio portrait of James Stolzenbach.',
+        title: 'James Stolzenbach',
+        meta: 'Boys Head Coach · 1926–1928',
+        note: 'A 1925 Capital University graduate who taught physics, chemistry, and general science. He is credited with revitalizing the track program, taking Worthington to a then-best second place in the county meet in his first year.',
+        year: '1926–1928'
+      },
+      {
+        src: 'images/coachPictures/Wannamaker Photo Enhanced.png',
+        section: 'coaches',
+        alt: 'Studio portrait of George Wanamaker.',
+        title: 'George Wanamaker',
+        meta: 'Boys Head Coach · 1929',
+        note: 'Born in Dickinson, South Dakota and raised in Bexley, Wanamaker graduated from Capital University in 1926 and spent the 1928–29 school year on the Worthington staff, coaching football, basketball, and track.',
+        year: '1929'
+      },
+      {
+        src: 'images/coachPictures/Lester Miller Picture Enhanced.jpeg',
+        section: 'coaches',
+        alt: 'Oval studio portrait of Lester Miller.',
+        title: 'Lester Miller',
+        meta: 'Boys Head Coach · 1930',
+        note: 'A former Ohio State pitcher who threw four years of professional baseball. Hired to restart Worthington baseball after a three-year lapse, which he did — at the cost of the 1930 track season.',
+        year: '1930'
+      },
+      {
+        src: 'images/coachPictures/Ernie Roush Photo Enhanced.jpeg',
+        section: 'coaches',
+        alt: 'Portrait of Coach Ernie Roush in a cap and whistle, looking off camera.',
+        title: 'Ernie Roush',
+        meta: 'Boys Head Coach · 1939–1940',
+        note: 'An Ohio State graduate with a double major in mechanical engineering and physical education. Roush took the 1938 football team to Worthington’s first Franklin County championship, then won county titles in basketball and track the following year.',
+        year: '1939–1940'
+      },
+      {
+        src: 'images/coachPictures/Heischman Photo Enhanced.jpeg',
+        section: 'coaches',
+        alt: 'Ray Heischman standing in front of a chalkboard covered in Maxwell’s Equations.',
+        title: 'Ray Heischman',
+        meta: 'Boys Head Coach · 1941',
+        note: 'A science and math teacher and Capital University basketball standout. He later became principal at Worthington High and, in 1945–46, coached the Cardinals to a state runner-up finish in basketball.',
+        year: '1941'
+      },
+      {
+        src: 'images/coachPictures/Frank Howe Photo Enhanced.jpeg',
+        section: 'coaches',
+        alt: 'Portrait of Frank Howe.',
+        title: 'Frank Howe',
+        meta: 'Boys Head Coach · 1943',
+        note: 'One season, and he made it count: Howe restarted the program after the war-canceled 1942 season and won both the Franklin County and District championships — Worthington’s first District title in track and field.',
+        year: '1943'
+      },
+      {
+        src: 'images/coachPictures/Dow Nelson Picture Enhanced.jpeg',
+        section: 'coaches',
+        alt: 'Portrait of Dow Nelson in a vest with a whistle around his neck.',
+        title: 'Dow Nelson',
+        meta: 'Boys Head Coach · 1944–1945',
+        note: 'His 1945 squad won the Muskingum Relays and the District championship, and the mile relay of Earl Nash, George Wood, Jim Sheaf, and Don Korte became Worthington’s first state champions in track and field. The Dow Nelson Sports Complex is named for him.',
+        year: '1944–1945'
+      },
+      {
+        src: 'images/coachPictures/Hittepole Picture Enhanced.jpeg',
+        section: 'coaches',
+        alt: 'Studio portrait of Almond E. Hittepole.',
+        title: 'Al Hittepole',
+        meta: 'Boys Head Coach · 1946',
+        note: 'A one-year fill-in who won the District championship at Ohio Wesleyan. His sprinter Earl Nash took second in the state 440y run, tying the best individual finish in school history to that point.',
+        year: '1946'
+      },
+      {
+        src: 'images/coachPictures/Daup Picture Enhanced.png',
+        section: 'coaches',
+        alt: 'Portrait of Jon Daup.',
+        title: 'Jon Daup',
+        meta: 'Boys Head Coach · 1986–1987',
+        note: 'Two seasons, two District championships, and District Coach of the Year both years. His 1987 team finished 12th in the state behind Tom Lange’s school-record 7′0" high jump.',
+        year: '1986–1987'
+      },
+      {
+        src: 'images/galleryPhotos/Eisenhart Clary Pelkey 1957.png',
+        section: 'coaches',
+        alt: 'Coach Les Eisenhart, holding a clipboard, laughing with two athletes — Jim Clary in a white shirt and Duane Pelkey in a Worthington sweatshirt.',
+        title: 'Eisenhart, Clary & Pelkey',
+        meta: '1957',
+        note: 'Coach Les Eisenhart of Worthington High’s perennially strong track squad shown with two of his aces after the Cardinals repeated as Mid-Six champs at Hilliard. Left to right: Jim Clary, Eisenhart, and Duane Pelkey. — Printed caption',
+        year: '1957'
+      },
+
+      // ── Team photos ──
+      {
+        src: 'images/1952 Team Photo.jpeg',
+        section: 'teams',
+        alt: 'Worthington High School track team photograph, three rows of athletes seated and standing in front of stadium bleachers, with Coach Eisenhart at the left of the back row.',
+        title: 'Team Photo',
+        meta: '1952',
+        note: 'Left to right — Row 3: Coach Eisenhart, Schumacher, Mitchell, Zimmer, Knecht, Blackburn, Dick Rieke, Demos. Row 2: Adams, Bobrovnikoff, Cariens, Joseph, Ross, Cox, Cevy, Goshorn. Row 1: Williams, Stevens, Don Rieke, Butler, Mally, Bell, Bivens, Bronson. — Printed caption',
+        year: '1952'
+      },
+      {
+        src: 'images/galleryPhotos/1952 Arlington Relays Trophy.png',
+        section: 'teams',
+        alt: 'Relays Queen Pat Harris, in a white coat and crown, hands a trophy to Ken Adams in a Worthington sweatshirt, with Coach Les Eisenhart looking on at left.',
+        title: 'Upper Arlington Relays Trophy',
+        meta: '1952',
+        note: '“And to the winner this beautiful trophy,” Relays Queen Pat Harris said to Ken Adams of the Worthington High track team after its championship performance in the 7th annual Upper Arlington Relays. The smiling gentleman on the left is Les Eisenhart, the Worthington coach. — Dispatch staff photo',
+        year: '1952'
+      },
+      {
+        src: 'images/galleryPhotos/1960 2 mile Relay Squad.png',
+        section: 'teams',
+        alt: 'Four Worthington runners in warm-up jackets leaning on a hurdle, smiling, with packed stadium seating behind them.',
+        title: 'Two-Mile Relay Squad',
+        meta: '1960',
+        note: 'Worthington High School’s two-mile relay team flashes smiles after setting a new record of 8:15 in the Ohio Relays at Ohio Stadium. Left to right: Jeff Moorhead, Gary Littlepage, Earl Bader, and George Dambach. The old mark was 8:23. — Dispatch photo',
+        year: '1960'
+      },
+      {
+        src: 'images/galleryPhotos/District Champions Girls 2003.png',
+        section: 'teams',
+        alt: 'Sixteen members of the Thomas Worthington girls track and field team posed in two rows on the infield grass, one holding a district championship plaque.',
+        title: 'Girls District Champions',
+        meta: '2003',
+        note: 'Members of the Thomas Worthington girls track and field team celebrate its Division I District I championship at Hilliard Davidson. — News photo by Brian McLean',
+        year: '2003'
+      }
+    ];
+
+    /* ── Build the sections ── */
+    const sectionsEl = document.getElementById('gallery-sections');
+
+    // Text from PHOTOS lands in innerHTML, so anything that could be mistaken
+    // for markup gets neutralized on the way in.
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+      ));
+    }
+
+    // Display order, flattened across sections. The viewer indexes into this
+    // rather than PHOTOS, so paging runs down the page as it is laid out —
+    // not in whatever order the data array happens to be written in.
+    const ORDER = [];
+
+    SECTIONS.forEach(sec => {
+      const items = PHOTOS.filter(p => p.section === sec.id);
+      if (!items.length) return;   // no photos yet: no header either
+
+      const head = document.createElement('div');
+      head.className = 'sec-head';
+      head.innerHTML = '<span class="sec-label">' + esc(sec.label) + '</span>'
+                     + '<span class="sec-rule"></span>';
+      sectionsEl.appendChild(head);
+
+      const grid = document.createElement('div');
+      grid.className = 'masonry' + (sec.wide ? ' masonry-wide' : '');
+      sectionsEl.appendChild(grid);
+
+      items.forEach(p => buildTile(p, grid));
+    });
+
+    function buildTile(p, grid) {
+      const i = ORDER.length;
+      ORDER.push(p);
+
+      const tile = document.createElement('button');
+      tile.className = 'tile';
+      tile.type = 'button';
+      tile.setAttribute('aria-label', 'View photo: ' + (p.title || 'untitled'));
+      // Each caption part is emitted only if it has content, so a photo with
+      // just a name doesn't render a stack of empty elements under it.
+      tile.innerHTML =
+        '<div class="tile-frame">'
+        + '<img src="' + esc(p.src) + '" alt="' + esc(p.alt) + '" loading="lazy" />'
+        + '<div class="tile-wash"></div>'
+        + '<div class="tile-scrim"></div>'
+        + (p.year ? '<div class="tile-year">' + esc(p.year) + '</div>' : '')
+        + '</div>'
+        + '<div class="tile-caption"><div class="tile-caption-inner">'
+        + (p.title ? '<div class="tile-title">' + esc(p.title) + '</div>' : '')
+        + (p.meta  ? '<div class="tile-meta">'  + esc(p.meta)  + '</div>' : '')
+        + (p.note  ? '<p class="tile-note">'    + esc(p.note)  + '</p>'   : '')
+        + '</div></div>';
+      tile.addEventListener('click', () => openLightbox(i));
+      grid.appendChild(tile);
+    }
+
+    document.getElementById('photo-count').textContent = ORDER.length;
+
+    /* ── Caption switch ──
+       Off by default: the gallery reads as photographs first. Flipping it on
+       expands every tile's caption block at once. */
+    const capSwitch = document.getElementById('caption-switch');
+    // Target the label by id, not `span:last-child` — the knob is also a span
+    // that is its parent's last child, so it would match first and the label
+    // text would end up printed inside the toggle.
+    const capLabel = document.getElementById('caption-switch-label');
+    capSwitch.addEventListener('click', () => {
+      const on = capSwitch.getAttribute('aria-pressed') === 'true';
+      capSwitch.setAttribute('aria-pressed', String(!on));
+      // One class on the wrapper; the CSS reaches every section's tiles.
+      sectionsEl.classList.toggle('captions-on', !on);
+      capLabel.textContent = !on ? 'Hide captions' : 'Show captions';
+    });
+
+    /* ── Lightbox ── */
+    const lb      = document.getElementById('lightbox');
+    const lbImg   = document.getElementById('lb-img');
+    const lbTitle = document.getElementById('lb-title');
+    const lbMeta  = document.getElementById('lb-meta');
+    const lbNote  = document.getElementById('lb-note');
+    const lbCount = document.getElementById('lb-count');
+    const lbInfo  = document.getElementById('lb-info');
+    const lbPanel = document.getElementById('lb-panel');
+    let current = 0;
+    // Where to send focus when the viewer closes, so keyboard users land back
+    // on the tile they opened rather than at the top of the document.
+    let lastFocused = null;
+    // Whether the reader has asked to see the text, kept separate from whether
+    // the current photo actually has any — so paging past an uncatalogued
+    // photo doesn't silently revoke the choice for the next one that does.
+    let infoWanted = false;
+
+    function showPhoto(i) {
+      current = (i + ORDER.length) % ORDER.length;
+      const p = ORDER[current];
+      lbImg.src = p.src;
+      lbImg.alt = p.alt;
+      lbTitle.textContent = p.title || '';
+      lbMeta.textContent  = p.meta  || '';
+      lbNote.textContent  = p.note  || '';
+      lbCount.textContent = (current + 1) + ' / ' + ORDER.length;
+
+      // No text written for this photo: nothing for the button to reveal, so
+      // it goes away rather than opening an empty panel.
+      const hasText = Boolean(p.title || p.meta || p.note);
+      lbInfo.hidden = !hasText;
+      setInfo(infoWanted && hasText);
+    }
+
+    function openLightbox(i) {
+      lastFocused = document.activeElement;
+      // The viewer opens with the text hidden too, matching the grid default —
+      // but it inherits the switch, so captions-on carries straight through.
+      infoWanted = sectionsEl.classList.contains('captions-on');
+      showPhoto(i);
+      lb.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('lb-close').focus();
+    }
+
+    function closeLightbox() {
+      lb.classList.remove('is-open');
+      document.body.style.overflow = '';
+      if (lastFocused) lastFocused.focus();
+    }
+
+    function setInfo(on) {
+      lbInfo.setAttribute('aria-pressed', String(on));
+      lbPanel.classList.toggle('is-open', on);
+    }
+
+    lbInfo.addEventListener('click', () => {
+      infoWanted = lbInfo.getAttribute('aria-pressed') !== 'true';
+      setInfo(infoWanted);
+    });
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click', () => showPhoto(current - 1));
+    document.getElementById('lb-next').addEventListener('click', () => showPhoto(current + 1));
+
+    // Click the backdrop (but not the photo or the controls) to dismiss.
+    lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape')     closeLightbox();
+      if (e.key === 'ArrowLeft')  showPhoto(current - 1);
+      if (e.key === 'ArrowRight') showPhoto(current + 1);
+    });
+  </script>
+
+</body>
+</html>

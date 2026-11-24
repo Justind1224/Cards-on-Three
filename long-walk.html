@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Here Ends His Long Walk — TWHS Track &amp; Field Stories</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,400;1,700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
+
+    /* ── Nav link underline ── */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Article body typography ── */
+    .article-body {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 1.0625rem;
+      line-height: 1.85;
+      color: #1E293B;
+    }
+    .article-body p {
+      margin-bottom: 1.5rem;
+      text-indent: 2em;
+    }
+    .article-body p:first-of-type { text-indent: 0; }
+
+    /* ── Drop cap ── */
+    .article-body p:first-of-type::first-letter {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 4.5rem;
+      font-weight: 800;
+      color: #C0182A;
+      float: left;
+      line-height: 0.78;
+      margin-right: 0.1em;
+      margin-top: 0.1em;
+    }
+
+    /* ── Inline figure ──
+       Portraits run alongside the text the way they do in the source document.
+       They are floated rather than block-level so the narrative keeps its
+       rhythm; below 720px the float is dropped and they center full-width,
+       because a 230px float in a phone-width column leaves unreadable ragged
+       slivers of text beside it. */
+    .fig {
+      margin: 0.35rem 0 1.25rem;
+      text-indent: 0;
+    }
+    .fig-right { float: right; width: 232px; margin-left: 2rem; }
+    .fig-left  { float: left;  width: 232px; margin-right: 2rem; }
+    /* Wide group shots get the full column instead of a 232px float — at
+       thumbnail width nobody in a 25-man team photo is distinguishable. */
+    .fig-full  { float: none; width: 100%; margin: 2rem 0; clear: both; }
+    .fig img {
+      width: 100%; height: auto; display: block;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 10px rgba(27,42,94,0.14), 0 8px 28px rgba(27,42,94,0.10);
+    }
+    .fig figcaption {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7125rem; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: #64748B; text-align: center;
+      margin-top: 0.6rem;
+    }
+    @media (max-width: 720px) {
+      .fig-right, .fig-left { float: none; width: 100%; max-width: 320px; margin: 1.5rem auto; }
+    }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      border-left: 4px solid #C0182A;
+      margin: 2.5rem 0;
+      padding: 1.25rem 1.75rem;
+      background: linear-gradient(135deg, #F8F9FB 0%, #EEF2FF 100%);
+      border-radius: 0 0.5rem 0.5rem 0;
+      text-indent: 0;
+      clear: both;
+    }
+    .pull-quote blockquote {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      font-weight: 700;
+      color: #1B2A5E;
+      line-height: 1.5;
+      margin: 0 0 0.5rem 0;
+    }
+    .pull-quote cite {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748B;
+      font-style: normal;
+    }
+
+    /* ── Article section heading + divider ── */
+    .section-rule {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 2.5rem 0;
+      clear: both;
+    }
+    .section-rule::before,
+    .section-rule::after { content: ''; flex: 1; height: 1px; background: #E2E8F0; }
+    .section-rule span { color: #C0182A; font-size: 1rem; }
+
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700;
+      color: #1B2A5E; letter-spacing: -0.02em; line-height: 1.2;
+      margin: 2.75rem 0 1.25rem;
+      clear: both;
+    }
+
+    /* ── Results board ──
+       The finish is the payoff of the whole piece, so the four times get a
+       standing of their own rather than being buried in a sentence. */
+    .results {
+      clear: both; text-indent: 0;
+      margin: 2rem 0;
+      background: linear-gradient(135deg, #0D1730 0%, #1B2A5E 100%);
+      border-radius: 0.75rem;
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 4px 16px rgba(27,42,94,0.2), 0 12px 36px rgba(27,42,94,0.14);
+    }
+    .results-head {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: #F9A8B3; margin-bottom: 1rem;
+    }
+    .results-row {
+      display: flex; align-items: baseline; gap: 0.875rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-family: 'Inter', sans-serif;
+    }
+    .results-row:last-child { border-bottom: none; }
+    .results-pos {
+      width: 1.5rem; flex-shrink: 0;
+      font-size: 0.8125rem; font-weight: 700; color: #64748B;
+    }
+    .results-team { flex: 1; font-size: 0.9375rem; font-weight: 500; color: #CBD5E1; }
+    .results-time {
+      font-size: 0.9375rem; font-weight: 600; color: #94A3B8;
+      font-variant-numeric: tabular-nums;
+    }
+    .results-row.is-winner .results-pos  { color: #C0182A; }
+    .results-row.is-winner .results-team { color: #fff; font-weight: 700; }
+    .results-row.is-winner .results-time { color: #fff; font-weight: 700; }
+
+    /* ── Fact list ── */
+    .facts { clear: both; text-indent: 0; margin: 2rem 0; padding: 0; list-style: none; }
+    .facts li {
+      position: relative;
+      padding: 0 0 0 1.5rem;
+      margin-bottom: 1.1rem;
+      font-size: 1rem; line-height: 1.8;
+    }
+    .facts li::before {
+      content: ''; position: absolute; left: 0; top: 0.72em;
+      width: 6px; height: 6px; border-radius: 50%; background: #C0182A;
+    }
+    .facts li:last-child { margin-bottom: 0; }
+
+    /* ── Epilogue separator ── */
+    .epilogue-rule {
+      clear: both; text-align: center;
+      margin: 2.75rem 0 2rem;
+      color: #CBD5E1; letter-spacing: 0.6em; font-size: 0.875rem;
+    }
+
+    /* ── Sidebar story links ── */
+    .story-link {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.875rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(27,42,94,0.07);
+    }
+    .story-link:hover { background: #F0F4FF; box-shadow: 0 2px 8px rgba(27,42,94,0.12); }
+    .story-link:active { background: #E8EDFF; }
+    .story-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 0.5rem; }
+    .story-link.active-story {
+      background: linear-gradient(135deg,#1B2A5E,#243575);
+      box-shadow: 0 4px 12px rgba(27,42,94,0.25);
+    }
+    .story-link.active-story .story-title { color: #fff; }
+    .story-link.active-story .story-meta { color: #94A3B8; }
+    .story-link.active-story .story-num { background: rgba(255,255,255,0.15); color: #fff; }
+    .story-link.story-disabled {
+      opacity: 0.45; cursor: not-allowed; pointer-events: none;
+      background: #F1F3F7; box-shadow: none;
+    }
+
+    /* ── Footer link ── */
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    /* ── Grain overlay ── */
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730; position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:86px;">
+      <a href="index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none; flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x_trimmed.png" alt="TWHS Cardinals" style="height:70px; width:auto; filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+      </a>
+      <nav style="display:flex; align-items:center; gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; transition:color 0.15s;">Stories</a>
+        <a href="gallery.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Gallery</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem; border-radius:0.375rem; background:#C0182A; color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(192,24,42,0.35);">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Article Hero ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 60%,#243575 100%); position:relative; overflow:hidden;">
+    <div style="position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3.5rem 1.5rem 3rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+        <a href="index.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <span style="color:#475569;font-size:0.8125rem;">&#x203A;</span>
+        <a href="stories.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Stories</a>
+        <span style="color:#475569;font-size:0.8125rem;">&#x203A;</span>
+        <span style="color:#CBD5E1;font-size:0.8125rem;">Here Ends His Long Walk</span>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:0.5rem;margin-bottom:1rem;padding:0.3rem 0.85rem;border-radius:999px;background:rgba(192,24,42,0.15);border:1px solid rgba(192,24,42,0.3);color:#F9A8B3;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+        Track History — Worthington High, 1952
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2.25rem,5vw,3.25rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.08;margin-bottom:1.25rem;">
+        Here Ends His Long Walk
+      </h1>
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(192,24,42,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="14" height="14" fill="none" stroke="#F9A8B3" viewBox="0 0 24 24" style="stroke-width:2;"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          </div>
+          <div>
+            <div style="color:#fff;font-size:0.875rem;font-weight:600;">Bill Darling</div>
+            <div style="color:#64748B;font-size:0.75rem;">Author</div>
+          </div>
+        </div>
+        <div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>
+        <div style="color:#94A3B8;font-size:0.8125rem;">The 1952 Cardinals &middot; Worthington, Ohio</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Article + Sidebar ── -->
+  <main style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 4rem;">
+    <div class="layout" style="display:grid;grid-template-columns:1fr 280px;gap:3rem;align-items:start;">
+
+      <!-- ── Article Body ── -->
+      <article>
+        <div style="background:#fff;border-radius:0.875rem;padding:3rem 3.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);">
+
+          <div class="article-body">
+            <p>The 1952 track team caught a break. Though they consisted of only 25 members &mdash; the
+            smallest team Coach Eisenhart had ever fielded &mdash; he felt his team had the chance to be one of the
+            best in school history. Due to the increasing population of the town and growing enrollment in
+            the school system, Worthington had been moved up to Class A in 1951, making them one of the
+            smallest &ldquo;big&rdquo; schools in the state, and they subsequently failed to score at the state meet for the
+            first time in nine years. The number of boys in the school dipped just slightly in 1952, but
+            enough to move the Cardinals temporarily back in with the small schools. Eisenhart had to know
+            their long-term future was in Class A, but 1952 would be one of their last chances to be a big fish
+            in a small pond.</p>
+
+            <figure class="fig fig-full">
+              <img src="images/1952 Team Photo.jpeg" alt="The 1952 Worthington High School track team, three rows of athletes in front of stadium bleachers, Coach Eisenhart at the left of the back row." loading="lazy" />
+              <figcaption>The 1952 Cardinals &middot; Coach Eisenhart, back row left</figcaption>
+            </figure>
+
+            <p>The 1952 season began unofficially, and somewhat amazingly, on April 3, at Ohio
+            Stadium. Coach Eisenhart, ever the salesman, somehow convinced Ohio State track coach Larry
+            Snyder to host an exhibition tri-meet at The Horseshoe between Worthington High School,
+            Columbus East High School, and the Ohio State University freshman track team. Given that
+            college athletes (a) compete in different events, (b) throw heavier implements, and (c) go over
+            higher hurdles, the idea of such a meet even being proposed is a bit absurd and today would
+            likely be not only frowned upon by the OHSAA, but possibly banned. Thankfully, no team
+            scores were kept as Worthington, predictably, did not win a single event. But the 1952 season
+            was under way.</p>
+
+            <p>The first official, full-team meet of the 1952 campaign was on April 16 in Delaware, with
+            host Willis High School (the predecessor to Delaware Hayes High) taking on Worthington and
+            Arlington. The Cardinals came out on top, with senior Paul Mally winning both hurdle races,
+            sophomore Jack Blackburn winning the mile, and Jack Bartley winning the pole vault in 9&prime;&nbsp;6&Prime;.
+            Two days later, Coach Eisenhart took a small contingent to the Mansfield Relays, where the boys
+            placed third in the 4-mile relay and fifth in the 480y shuttle hurdles.</p>
+
+            <figure class="fig fig-left">
+              <img src="images/galleryPhotos/1952 Arlington Relays Trophy.png" alt="Relays Queen Pat Harris handing the Upper Arlington Relays trophy to Ken Adams, with Coach Les Eisenhart looking on at left." loading="lazy" />
+              <figcaption>Ken Adams accepts the Upper Arlington Relays trophy</figcaption>
+            </figure>
+
+            <p>In the first two weeks of May, the Cardinals caught a wave and rode it to three straight
+            invitational victories. On May 6, at the conference championships, Jack Blackburn and Jerry
+            Williams took the first two spots in the mile, Jim Bivins and Cox matched that effort in the 880y
+            run, and Paul Mally and Dick Rieke did the same in the long jump: three 1-2 finishes leading
+            Worthington to its second straight Mid-Six conference title in front of the home fans. On May 11,
+            the Cardinals then headed to Oxford and won the Miami Relays, buoyed by Jerry Cox taking the
+            mile and Bob Stevens&rsquo; first place effort in the shot put with a throw of 43&prime;&nbsp;3.5&Prime;. Then three days
+            later, as described in the <em>Dispatch</em>, &ldquo;Les Eisenhart&rsquo;s classy Worthington High track team&rdquo; won
+            the seventh annual Upper Arlington relays by 9 points over Bellefontaine.</p>
+
+            <p>Worthington then returned to Delaware &mdash; this time to Ohio Wesleyan &mdash; for the district
+            track championships on May 17. The Cardinals came home with six gold medals: Stevens in the
+            shot put, Cox in the mile, Adams in the 440, Bivens in the 880, Jack Bartley in the pole vault,
+            and the mile relay. Back home in Class B, Worthington made it to state in eight events, with two
+            entries each in the mile, the 120y hurdles and the 880y run. As a team, they outclassed the field,
+            winning the district championship by 15 points over second-place Richmond.</p>
+
+            <figure class="fig fig-right">
+              <img src="images/storyPhotos/Paul Mally.jpeg" alt="Studio portrait of Paul Mally in a suit and tie." loading="lazy" />
+              <figcaption>Paul Mally</figcaption>
+            </figure>
+
+            <p>At the state meet at Ohio Stadium the following week, the Cardinals finished in eighth
+            place, tied for the second-best team finish in history up to that point. Their state meet was
+            highlighted by a fourth-place effort by Paul Mally in the 120y hurdles, a bronze medal for Bob
+            Stevens in the shot put, and silver for the mile relay of Mally, Jim Bivens, Dick Rieke and Ken
+            Adams. <em>The Worthington News</em> noted:</p>
+
+            <div class="pull-quote">
+              <blockquote>&ldquo;This also marks the probable end of class B competition for the Cards, so next year will find them competing with the class A schools and thus the struggle will become tougher.&rdquo;</blockquote>
+              <cite>&mdash; The Worthington News, 1952</cite>
+            </div>
+
+            <figure class="fig fig-left">
+              <img src="images/storyPhotos/Dan Stevens.png" alt="Yearbook portrait of Dan Stevens, smiling, in a suit and patterned tie." loading="lazy" />
+              <figcaption>Dan Stevens</figcaption>
+            </figure>
+
+            <p>Bob Stevens&rsquo; third place finish that day made history as it was the first time, and remains
+            the only time, a male Worthington track and field athlete has scored at the state championship in
+            the shot put. Mr. Stevens passed away on April 17, 2025, at the age of 91. His son, Dan &mdash; a
+            former Worthington High track athlete and coach &mdash; is the strength and conditioning coach for
+            both high schools in Worthington.</p>
+
+            <h2 class="sec-title">The Pole Vaulter</h2>
+
+            <p>Jack Bartley being the 1952 district champion in the pole vault was a bit of a surprise,
+            mostly because he had spent the autumn months of his senior year recovering from being shot.</p>
+
+            <p>On September 16, 1951, Bartley and his friends Jerry Cunningham, Arthur Loos and
+            track teammate Paul Mally were all target shooting on a farm where Henderson Road meets the
+            Olentangy River. In an unfortunate turn of events, Cunningham accidentally shot his best friend
+            in the leg. The boys piled Bartley into an automobile and took him &mdash; not south to the nearby
+            White Cross Hospital &mdash; but north back to Worthington. They took him to the McConagha Funeral
+            Home, which doubled as the village&rsquo;s ambulance service, perhaps in the hope that no hospital
+            trip would be needed. The funeral home workers, understandably, took him directly to a hospital.
+            Bartley&rsquo;s profile in the 1952 yearbook indicates he did not run cross country for Coach Eisenhart
+            in the fall of his senior year, for obvious reasons.</p>
+
+            <p>After graduation, Jack Bartley attended Ohio State University and began later working
+            for the Columbus Transit Company, which operated the city&rsquo;s public bus system. On April 30,
+            1955, he married the lovely Carole Lynn Kohler in a ceremony at St. Luke&rsquo;s Lutheran Church. In
+            July of 1962, the lovely Carole Lynn Kohler Bartley filed for divorce, seeking custody of the
+            children. Divorced before he was 30, and having already survived being shot, Bartley gave up
+            the life behind the wheel and turned to a career path familiar for someone in this situation: he
+            became a country music singer.</p>
+
+            <figure class="fig fig-right">
+              <img src="images/storyPhotos/Jack Bartley DJ.png" alt="Publicity portrait of Jack Bartley from his country music and disc jockey years." loading="lazy" />
+              <figcaption>Jack Bartley</figcaption>
+            </figure>
+
+            <p>Performing as the lead singer for bands such as The Workingmen, The Road Rangers, and
+            the Shawnee Valley Boys, Jack Bartley performed in concert halls, county fairs, and clubs in and
+            around central and southwest Ohio in the 1960s and 1970s. He was a regular at &ldquo;Jessie&rsquo;s Country
+            Jamboree&rdquo; in Waldo, the Circleville Pumpkin Show, and the &ldquo;Paint Valley Jamboree&rdquo; in
+            Bainbridge, which was advertised as &ldquo;The Biggest Show This Side of Nashville.&rdquo; He released
+            singles such as &ldquo;Hot Pants&rdquo; and &ldquo;Cleaning Things Up&rdquo; on the Country Giant music label and
+            was the opening act for such Grand Ole Opry stars as Carl Butler and Pearl, David Huston and,
+            most impressively, country music hall of famer Mel Tillis. Jack Bartley, who also had his own
+            record store, was well known as a disc jockey in the Dayton area and, in 1971, was named the
+            Ohio Country Music DJ of the Year by the Country Music Association in a ceremony held in
+            Nashville, Tennessee.</p>
+
+            <h2 class="sec-title">The Distance Runner Who Changed His Name</h2>
+
+            <figure class="fig fig-left">
+              <img src="images/storyPhotos/David Bobrovnikoff.png" alt="Senior portrait of David Bobrovnikoff in glasses, a suit and a striped tie." loading="lazy" />
+              <figcaption>David Bobrovnikoff</figcaption>
+            </figure>
+
+            <p>The 1952 track team also had a junior distance runner by the name of David
+            Bobrovnikoff. A cross country runner in the fall, he scored enough points in track meets in the
+            spring of 1952 to earn a varsity letter. Incredibly bright, Bobrovnikoff scored 14th in Ohio in the
+            chemistry portion of the state scholarship exam and was also a founding member of Worthington
+            High&rsquo;s first debating society. Accepted into Carnegie Mellon University out of high school, he
+            attended medical school at the University of Pittsburgh. He also received advanced training in
+            anatomic pathology at Duke Medical Center and the Scripps Research Institute in La Jolla,
+            California, before joining the faculty at the UCLA College of Medicine. But when David
+            Bobrovnikoff returned to Worthington in 1973 for his 20-year class reunion, in addition to all of
+            his new titles, he also had a wife, a 1-year old son, and a brand new name: David Porter.</p>
+
+            <p>David Bobrovnikoff was the son of Nicholas Bobrovnikoff, who was simultaneously on
+            the faculties of both Ohio Wesleyan and Ohio State, while also serving as the director of the
+            Perkins Observatory in Delaware. A renowned astronomer, Bobrovnikoff was one of the world&rsquo;s
+            foremost experts on comets, especially Halley&rsquo;s Comet. In 1919, German astronomer Karl
+            Reinmuth discovered a new asteroid, four miles in length, and named it 2637 Bobrovnikoff in
+            honor of his contributions to the field. But during the 1950s and 1960s, Dr. Nicholas
+            Bobrovnikoff was part of research projects on the west campus of Ohio State University which
+            were cloaked in secrecy. Funded by the U.S. military and the intelligence communities, the
+            research focused on an issue that, until the late 1940s, wasn&rsquo;t at all controversial: the shape of the
+            earth.</p>
+
+            <p>Until the end of World War II, geodesy &mdash; the study of the earth&rsquo;s shape &mdash; was one of the
+            areas of science with the highest degree of cooperation between countries. In the words of
+            University of California researcher John Cloud, &ldquo;Historically, geodesy advanced cooperatively or
+            not at all.&rdquo; The Cold War changed all of that. With the drawing of the Iron Curtain and with
+            America and Russia engaging in an arms race, accurately knowing every inch of the earth&rsquo;s
+            topography and curvature suddenly became a matter of national military security. From the late
+            1940s through the late 1960s, there were numerous top-secret research grants at Ohio State &mdash;
+            hidden beneath innocuous-sounding and fictional topics such as soybean yields &mdash; that were
+            actually geodesic grants funded by the Department of Defense. Professor Bobrovnikoff &mdash; an
+            &eacute;migr&eacute; from Russia and once an officer in the Russian imperial army &mdash; was well-versed in
+            Russian geodesic research and was now applying that knowledge for the Americans on the west
+            campus of Ohio State University, much to the dismay of the KGB.</p>
+
+            <p>When direct entreaties to Nicholas Bobrovnikoff to get him to stop had no effect, the
+            KGB turned their attention to his family and began exerting pressure and imposing threats on
+            Bobrovnikoff&rsquo;s oldest son, David. In an attempt to release the pressure valve and throw Russian
+            intelligence off of his tail, sometime during his trainings and relocations, he changed his name.
+            For the rest of his professional career and personal life, he was known as David Dixon Porter.</p>
+
+            <p>On Sunday, September 6, 1970, David Dixon Porter went to the airport in Zurich,
+            Switzerland and boarded Swissair flight 100, bound for New York City. Not long after the plane
+            reached cruising altitude, an unfamiliar voice came over the address system and said, hauntingly:</p>
+
+            <div class="pull-quote">
+              <blockquote>&ldquo;Good evening. You now have a new captain.&rdquo;</blockquote>
+            </div>
+
+            <p>The DC8 jetliner had been hijacked by Arab terrorists and was ordered to be flown to a
+            remote desert airstrip in Zarqa, Jordan. Not long after landing, they were joined in the desert by
+            TWA flight 741, which had originated in Frankfurt, Germany. In total, five planes were hijacked
+            in five different countries. Three of them were forced to land in Zarqa, one landed in Cairo, and
+            the last &mdash; El Al flight 219 from Amsterdam &mdash; managed to subdue their hijackers and land safely.
+            It started a four-day saga that captivated the world.</p>
+
+            <p>The hijackers were from a group known as the Popular Front for the Liberation of
+            Palestine, or PFLP, and they made demands that Palestinian prisoners in Israel, Great Britain,
+            America and West Germany be released over the next 72 hours, or the planes would be blown up
+            with the passengers on board. On the second day, after negotiations with the Jordanian army, the
+            hijackers agreed to let the women and children go, provided they were not Jewish. As the crisis
+            reached day three, President Nixon considered a military air strike against the PFLP, but
+            Secretary of Defense Melvin Laird scuttled the mission due to the weather. Years later Laird
+            admitted &ldquo;the weather&rdquo; had just been an excuse to stop Nixon from making what Laird believed
+            to be a terrible mistake.</p>
+
+            <p>On day 3, the hijackers blinked, extending the deadline by one day. They agreed to
+            release another portion of the remaining hostages &mdash; provided they were not Jewish &mdash; who were
+            whisked away to safety. Eventually, the PFLP deplaned all the remaining passengers and, in a
+            last attempt at a show of strength, blew up all of the empty airliners. The PFLP then released
+            more passengers but kept 54 Jews in a hidden location as political prisoners. Two weeks later,
+            under siege by soldiers who were looking for them, the hijackers finally agreed to release all
+            passengers, in exchange for the freeing of a handful of Palestinian prisoners, thus ending what
+            journalist Martin Kolb called, &ldquo;America&rsquo;s introduction to global terrorism.&rdquo;</p>
+
+            <p>Not a single passenger had been killed. In the end, the terrorists had been unwilling to
+            commit mass murder to achieve their political ends. It was a mistake they would learn from and
+            not repeat.</p>
+
+            <p>David Dixon Porter, M.D., was a professor of pathology at the UCLA College of
+            Medicine for nearly thirty years. One of his specialties was training students in the art of
+            performing autopsies and he also served as the deputy coroner for Los Angeles County. In
+            homicide cases, Dr. Porter&rsquo;s autopsy reports would be used as evidence in criminal proceedings
+            and stored at the Superior Court Building, under the protection of the Los Angeles County Clerk
+            who, from 1973 to 1976, was a fellow former Worthington High School track standout, Clarence
+            Emerson Cabell.</p>
+
+            <p>David Dixon Porter died on April 16, 2017, from complications of Parkinson&rsquo;s disease, at
+            the age of 81.</p>
+
+            <p>Like his father before him, the details of his burial were never made public.</p>
+
+            <h2 class="sec-title">The Long Walk</h2>
+
+            <figure class="fig fig-right">
+              <img src="images/storyPhotos/Jack Blackburn.jpeg" alt="Jack Blackburn in a Worthington track sweatshirt with the winged-foot emblem." loading="lazy" />
+              <figcaption>Jack Blackburn</figcaption>
+            </figure>
+
+            <p>Despite being but a sophomore in the spring of 1952, Jack Blackburn was the Mid-Six
+            conference champion in the mile and finished second at the District, qualifying for the state
+            meet. He would go on to win the Mid-Six mile in both 1953 and 1954 and, upon graduation, held
+            the conference record with a time of 4:38.1. At the 1954 state meet, against Class A competition,
+            he ran 4:31.0 to finish third, which remains the second-best placing by a Worthington runner at
+            the state meet in the mile. Earlier in the same school year, in late October of 1953, Jack
+            Blackburn became the first Worthington runner to win an OHSAA state championship in cross
+            country, taking the 2-mile race held at the Ohio State University Scarlet and Gray golf course.
+            Blackburn was, without question, one of the all-time great distance runners in Worthington
+            history.</p>
+
+            <p>Jack Blackburn moved to the Springfield area where he worked as an alcohol and drug
+            counselor, a high school teacher and, later, a professor at Urbana University. He started a
+            nonprofit organization called Corinn&rsquo;s Way, set up to help women and young parents get started on
+            the right path in their life journeys. In 1984, he decided to run for public office and was elected
+            as a commissioner for the city of Springfield, a position he held for three years.</p>
+
+            <p>Jack Blackburn ran track for the Ohio State Buckeyes during his early college days. After
+            graduating, he stayed active in running, often taking part in masters track meets at Worthington
+            High that were put on by the organization he helped found, the Ohio Track Club. He also, along
+            with his father, transitioned into a more niche area of the sport by becoming one of the nation&rsquo;s
+            top competitive racewalkers. On July 3, 1960, Blackburn competed in the 50 kilometer racewalk
+            at the U.S. Olympic Trials held in Pittsburgh, Pennsylvania. He finished fourth, only 200 meters
+            out of third in the 31-mile, 5-hour race, missing the Rome Olympic team by an agonizing one
+            spot. He competed in many Olympic trials through the years in racewalking and, all told, he
+            finished in the top 6 three times, meaning he was a 3-time United States Olympic Team alternate.
+            His fourth place result in 1960 is the highest ever finish at a USATF National Championship by a
+            male Worthington track athlete and the closest any of them has ever come to competing in the
+            Olympic Games. He would remain a staunch supporter of racewalking for the rest of his life.</p>
+
+            <p>John Coleman &ldquo;Jack&rdquo; Blackburn died on December 23, 2021, at the age of 86. He rests in
+            Ferncliffe Cemetery in Springfield with a tombstone that features an image of his competition
+            days and the following epitaph:</p>
+
+            <div class="pull-quote">
+              <blockquote>&ldquo;Still the same loving, caring man he always was. He never strayed and here ends his long walk.&rdquo;</blockquote>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── Sidebar ── -->
+      <aside style="position:sticky;top:90px;">
+
+        <div style="background:#fff;border-radius:0.875rem;padding:1.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid #EEF0F5;">
+            <div style="width:3px;height:18px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.0625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.01em;margin:0;">More Stories</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <a href="stories.html" class="story-link">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#C0182A;color:#fff;font-size:0.6875rem;font-weight:700;flex-shrink:0;">1</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Tops in the County</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Franklin County, 1940</div>
+              </div>
+            </a>
+            <a href="greatest-race.html" class="story-link">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#C0182A;color:#fff;font-size:0.6875rem;font-weight:700;flex-shrink:0;">2</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">The Greatest Race</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">State Championship, 2019</div>
+              </div>
+            </a>
+            <a href="long-walk.html" class="story-link active-story">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#C0182A;color:#fff;font-size:0.6875rem;font-weight:700;flex-shrink:0;">3</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;line-height:1.35;margin-bottom:0.2rem;">Here Ends His Long Walk</div>
+                <div class="story-meta" style="font-size:0.7125rem;">Worthington High, 1952</div>
+              </div>
+            </a>
+            <a href="#" class="story-link story-disabled">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#EEF0F5;color:#64748B;font-size:0.6875rem;font-weight:700;flex-shrink:0;">4</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Story 4</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Coming soon</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:0.875rem;padding:1.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);">
+          <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:1rem;">
+            <div style="width:3px;height:18px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.0625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.01em;margin:0;">About the Author</h2>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.875rem;">
+            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1B2A5E,#C0182A);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;">BD</span>
+            </div>
+            <div>
+              <div style="font-size:0.875rem;font-weight:600;color:#1E293B;">Bill Darling</div>
+              <div style="font-size:0.75rem;color:#64748B;">TWHS Track Coach</div>
+            </div>
+          </div>
+          <p style="font-size:0.8125rem;color:#475569;line-height:1.7;margin:0;">Historian and archivist of the Worthington and Thomas Worthington track &amp; field program, documenting its history from the early 20th century to the present.</p>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+            <li><a href="gallery.html" class="footer-link">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

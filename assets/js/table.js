@@ -3,6 +3,45 @@ let recordsData;
 let currentGender = "boys";
 let currentCategory = "sprints";
 
+/* ── Sorting by performance ───────────────────────────────────────────────
+   These lists default to the best mark first rather than alphabetically by
+   athlete. Neither column sorts correctly as plain text: times run "10.65"
+   and "4:09.09", and field marks are feet-and-inches ("12' 6.5\""), where a
+   string compare would put 9' above 12'. So each is parsed to a number first.
+
+   Field events sort on the visible "Mark" column rather than "Mark (m)" —
+   11 rows in the data have a metric value that disagrees with their
+   feet-inches value, and sorting on the column people actually read keeps the
+   displayed order correct.
+───────────────────────────────────────────────────────────────────────────*/
+
+// "4:09.09" / "52.24" / "10.5" -> seconds. Unparseable values sort last.
+$.fn.dataTable.ext.type.order["track-time-pre"] = function (d) {
+  const m = String(d == null ? "" : d).trim().match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/);
+  if (!m) return Number.POSITIVE_INFINITY;
+  return (m[1] ? parseInt(m[1], 10) * 60 : 0) + parseFloat(m[2]);
+};
+
+// "12' 6.5\"" -> total inches. Tolerates the handful of rows with a stray
+// space or a straight quote ("46 '3\"", "133' 8'"). Unparseable sort last.
+$.fn.dataTable.ext.type.order["track-mark-pre"] = function (d) {
+  const n = String(d == null ? "" : d).match(/\d+(?:\.\d+)?/g);
+  if (!n) return Number.NEGATIVE_INFINITY;
+  if (n.length === 1) return parseFloat(n[0]);
+  return parseFloat(n[0]) * 12 + parseFloat(n[1]);
+};
+
+// Picks the column to open on: time ascending, distance/height descending.
+function defaultSort(columns) {
+  let i = columns.indexOf("Time");
+  if (i !== -1) return { index: i, dir: "asc", type: "track-time" };
+  i = columns.indexOf("Mark");
+  if (i !== -1) return { index: i, dir: "desc", type: "track-mark" };
+  i = columns.indexOf("Markm");
+  if (i !== -1) return { index: i, dir: "desc", type: "num" };
+  return null;
+}
+
 // Load JSON
 fetch("assets/json/allTimeListUpdated.json")
   .then(res => res.json())
@@ -139,9 +178,13 @@ function loadEvent(category, eventName) {
 
   container.appendChild(eventDiv);
 
-  // Initialize DataTable
-  $('#' + tableId).DataTable({
-    pageLength: 25,
-    destroy: true
-  });
+  // Initialize DataTable, opening on the best performance rather than
+  // alphabetically by athlete (which is what column 0 gives by default).
+  const sort = defaultSort(columns);
+  const opts = { pageLength: 25, destroy: true };
+  if (sort) {
+    opts.order = [[sort.index, sort.dir]];
+    opts.columnDefs = [{ type: sort.type, targets: sort.index }];
+  }
+  $('#' + tableId).DataTable(opts);
 }

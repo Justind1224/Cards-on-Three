@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>The Greatest Race — TWHS Track &amp; Field Stories</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,400;1,700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
+
+    /* ── Nav link underline ── */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: #C0182A;
+      transition: width 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Article body typography ── */
+    .article-body {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 1.0625rem;
+      line-height: 1.85;
+      color: #1E293B;
+    }
+    .article-body p {
+      margin-bottom: 1.5rem;
+      text-indent: 2em;
+    }
+    .article-body p:first-of-type { text-indent: 0; }
+
+    /* ── Drop cap ── */
+    .article-body p:first-of-type::first-letter {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 4.5rem;
+      font-weight: 800;
+      color: #C0182A;
+      float: left;
+      line-height: 0.78;
+      margin-right: 0.1em;
+      margin-top: 0.1em;
+    }
+
+    /* ── Inline figure ──
+       Portraits run alongside the text the way they do in the source document.
+       They are floated rather than block-level so the narrative keeps its
+       rhythm; below 720px the float is dropped and they center full-width,
+       because a 230px float in a phone-width column leaves unreadable ragged
+       slivers of text beside it. */
+    .fig {
+      margin: 0.35rem 0 1.25rem;
+      text-indent: 0;
+    }
+    .fig-right { float: right; width: 232px; margin-left: 2rem; }
+    .fig-left  { float: left;  width: 232px; margin-right: 2rem; }
+    /* Wide group shots get the full column instead of a 232px float — at
+       thumbnail width nobody in a 25-man team photo is distinguishable. */
+    .fig-full  { float: none; width: 100%; margin: 2rem 0; clear: both; }
+    .fig img {
+      width: 100%; height: auto; display: block;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 10px rgba(27,42,94,0.14), 0 8px 28px rgba(27,42,94,0.10);
+    }
+    .fig figcaption {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7125rem; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: #64748B; text-align: center;
+      margin-top: 0.6rem;
+    }
+    @media (max-width: 720px) {
+      .fig-right, .fig-left { float: none; width: 100%; max-width: 320px; margin: 1.5rem auto; }
+    }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      border-left: 4px solid #C0182A;
+      margin: 2.5rem 0;
+      padding: 1.25rem 1.75rem;
+      background: linear-gradient(135deg, #F8F9FB 0%, #EEF2FF 100%);
+      border-radius: 0 0.5rem 0.5rem 0;
+      text-indent: 0;
+      clear: both;
+    }
+    .pull-quote blockquote {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      font-weight: 700;
+      color: #1B2A5E;
+      line-height: 1.5;
+      margin: 0 0 0.5rem 0;
+    }
+    .pull-quote cite {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748B;
+      font-style: normal;
+    }
+
+    /* ── Article section heading + divider ── */
+    .section-rule {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 2.5rem 0;
+      clear: both;
+    }
+    .section-rule::before,
+    .section-rule::after { content: ''; flex: 1; height: 1px; background: #E2E8F0; }
+    .section-rule span { color: #C0182A; font-size: 1rem; }
+
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700;
+      color: #1B2A5E; letter-spacing: -0.02em; line-height: 1.2;
+      margin: 2.75rem 0 1.25rem;
+      clear: both;
+    }
+
+    /* ── Results board ──
+       The finish is the payoff of the whole piece, so the four times get a
+       standing of their own rather than being buried in a sentence. */
+    .results {
+      clear: both; text-indent: 0;
+      margin: 2rem 0;
+      background: linear-gradient(135deg, #0D1730 0%, #1B2A5E 100%);
+      border-radius: 0.75rem;
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 4px 16px rgba(27,42,94,0.2), 0 12px 36px rgba(27,42,94,0.14);
+    }
+    .results-head {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: #F9A8B3; margin-bottom: 1rem;
+    }
+    .results-row {
+      display: flex; align-items: baseline; gap: 0.875rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-family: 'Inter', sans-serif;
+    }
+    .results-row:last-child { border-bottom: none; }
+    .results-pos {
+      width: 1.5rem; flex-shrink: 0;
+      font-size: 0.8125rem; font-weight: 700; color: #64748B;
+    }
+    .results-team { flex: 1; font-size: 0.9375rem; font-weight: 500; color: #CBD5E1; }
+    .results-time {
+      font-size: 0.9375rem; font-weight: 600; color: #94A3B8;
+      font-variant-numeric: tabular-nums;
+    }
+    .results-row.is-winner .results-pos  { color: #C0182A; }
+    .results-row.is-winner .results-team { color: #fff; font-weight: 700; }
+    .results-row.is-winner .results-time { color: #fff; font-weight: 700; }
+
+    /* ── Fact list ── */
+    .facts { clear: both; text-indent: 0; margin: 2rem 0; padding: 0; list-style: none; }
+    .facts li {
+      position: relative;
+      padding: 0 0 0 1.5rem;
+      margin-bottom: 1.1rem;
+      font-size: 1rem; line-height: 1.8;
+    }
+    .facts li::before {
+      content: ''; position: absolute; left: 0; top: 0.72em;
+      width: 6px; height: 6px; border-radius: 50%; background: #C0182A;
+    }
+    .facts li:last-child { margin-bottom: 0; }
+
+    /* ── Epilogue separator ── */
+    .epilogue-rule {
+      clear: both; text-align: center;
+      margin: 2.75rem 0 2rem;
+      color: #CBD5E1; letter-spacing: 0.6em; font-size: 0.875rem;
+    }
+
+    /* ── Sidebar story links ── */
+    .story-link {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.875rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(27,42,94,0.07);
+    }
+    .story-link:hover { background: #F0F4FF; box-shadow: 0 2px 8px rgba(27,42,94,0.12); }
+    .story-link:active { background: #E8EDFF; }
+    .story-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 0.5rem; }
+    .story-link.active-story {
+      background: linear-gradient(135deg,#1B2A5E,#243575);
+      box-shadow: 0 4px 12px rgba(27,42,94,0.25);
+    }
+    .story-link.active-story .story-title { color: #fff; }
+    .story-link.active-story .story-meta { color: #94A3B8; }
+    .story-link.active-story .story-num { background: rgba(255,255,255,0.15); color: #fff; }
+    .story-link.story-disabled {
+      opacity: 0.45; cursor: not-allowed; pointer-events: none;
+      background: #F1F3F7; box-shadow: none;
+    }
+
+    /* ── Footer link ── */
+    .footer-link { color: #94A3B8; font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
+    .footer-link:hover { color: #fff; }
+    .footer-link:focus-visible { outline: 2px solid #C0182A; outline-offset: 2px; border-radius: 2px; }
+
+    /* ── Grain overlay ── */
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header style="background:#0D1730; position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:86px;">
+      <a href="index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none; flex-shrink:0;">
+        <img src="brand_assets/TW_TF_Color on Blue Horiz@3x_trimmed.png" alt="TWHS Cardinals" style="height:70px; width:auto; filter:drop-shadow(0 2px 10px rgba(0,0,0,0.28));" />
+      </a>
+      <nav style="display:flex; align-items:center; gap:1.75rem;">
+        <a href="seasons.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Seasons</a>
+        <a href="records.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Records</a>
+        <a href="coaches.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Coaches</a>
+        <a href="stories.html" class="nav-link" style="color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; transition:color 0.15s;">Stories</a>
+        <a href="gallery.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Gallery</a>
+        <a href="championships.html" class="nav-link" style="color:#CBD5E1; font-size:0.875rem; font-weight:500; text-decoration:none; transition:color 0.15s;">Championships</a>
+        <a href="allTimeList.html" style="padding:0.45rem 1.1rem; border-radius:0.375rem; background:#C0182A; color:#fff; font-size:0.875rem; font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(192,24,42,0.35);">All-Time List</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Article Hero ── -->
+  <section class="grain" style="background:linear-gradient(140deg,#0D1730 0%,#1B2A5E 60%,#243575 100%); position:relative; overflow:hidden;">
+    <div style="position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(192,24,42,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3.5rem 1.5rem 3rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+        <a href="index.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <span style="color:#475569;font-size:0.8125rem;">&#x203A;</span>
+        <a href="stories.html" style="color:#94A3B8;font-size:0.8125rem;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#94A3B8'">Stories</a>
+        <span style="color:#475569;font-size:0.8125rem;">&#x203A;</span>
+        <span style="color:#CBD5E1;font-size:0.8125rem;">The Greatest Race</span>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:0.5rem;margin-bottom:1rem;padding:0.3rem 0.85rem;border-radius:999px;background:rgba(192,24,42,0.15);border:1px solid rgba(192,24,42,0.3);color:#F9A8B3;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+        Track History — OHSAA State Championship, 2019
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2.25rem,5vw,3.25rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.08;margin-bottom:1.25rem;">
+        The Greatest Race
+      </h1>
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(192,24,42,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="14" height="14" fill="none" stroke="#F9A8B3" viewBox="0 0 24 24" style="stroke-width:2;"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          </div>
+          <div>
+            <div style="color:#fff;font-size:0.875rem;font-weight:600;">Bill Darling</div>
+            <div style="color:#64748B;font-size:0.75rem;">Author</div>
+          </div>
+        </div>
+        <div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>
+        <div style="color:#94A3B8;font-size:0.8125rem;">Girls 4x800m Relay &middot; Jesse Owens Memorial Stadium &middot; 2019</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Article + Sidebar ── -->
+  <main style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 4rem;">
+    <div class="layout" style="display:grid;grid-template-columns:1fr 280px;gap:3rem;align-items:start;">
+
+      <!-- ── Article Body ── -->
+      <article>
+        <div style="background:#fff;border-radius:0.875rem;padding:3rem 3.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);">
+
+          <div class="article-body">
+
+            <p>Of all of the events in track and field, the girls program at Worthington High School has
+            shined the brightest through the years in the 800m — the half mile. In the very first girls state
+            championship in 1975, held at Ohio Stadium, Worthington's Terry Jarboe became Ohio's first
+            Division 1 girls state champion in the 880y run, topping the field with a time of 2:21.4. Over the
+            years, three more Worthington middle distance runners became state champions in the half mile:
+            Laura McKinley in 1997, Ashley Forte in 2014, and Gia Napoleon in 2017. In addition,
+            Worthington had made their mark at the OHSAA State Championship in the 4x800 relay. In a
+            24-year period, beginning in 1985 and extending through the 2018 season, Worthington would
+            qualify for state in the 4x8 a remarkable 20 times. In thirteen of those years, the Cardinals
+            finished in the top 5. They had seven runner-up finishes, and one state championship — the 1997
+            squad led by Laura McKinley.</p>
+
+            <p>Heading into the 2019 track season, Thomas Worthington was one of the favorites to win
+            the state championship in the girls 4x800m relay. In 2018, the quartet of Carina Napoleon, Lydia
+            Miller, Cassidy Shaver, and Gia Napoleon ran 9:02.26 at the state meet, finishing fifth and
+            breaking the school record by over seven seconds. Many of the top teams had strong
+            contingencies returning, but of the four teams that finished ahead of them, TWHS was the only
+            team that had everyone coming back in 2019. State titles are hard to get, but Worthington had no
+            other goal for the event in the spring of 2019.</p>
+
+            <h2 class="sec-title">The Decision</h2>
+
+            <figure class="fig fig-left">
+              <img src="images/storyPhotos/Cassidy Shaver.jpeg" alt="Cassidy Shaver running in an Otterbein singlet, bib number 1." loading="lazy" />
+              <figcaption>Cassidy Shaver</figcaption>
+            </figure>
+
+            <p>As the postseason loomed in 2019, head coach Andy Cox was faced with a decision he
+            thought was already settled: who would actually run on the relay. Junior Cassidy Shaver had been
+            a relay stalwart for two years. Although she was the '4' — the runner with the slowest time — she
+            had arguably run the best of all at the state meet the year before. Her leg of 2:20.5 had been her
+            career best, delivered when it mattered most, and had kept the Cardinals in the running for a top
+            finish. During the indoor season in 2019, Cassidy was injured and watched as Tori Banks — a
+            cross country teammate and spring lacrosse player — filled in admirably in her absence. But
+            Cassidy was healthy now, improving every week, and on schedule to be in top form once the
+            postseason arrived.</p>
+
+            <p>Then she got sick. A bad cold turned into a bout of bronchitis and she missed valuable
+            training days heading into the Ohio Capital Conference championship meet. While Cassidy
+            finished 4th in the 800m at conference, her time of 2:26.3 was not what she was looking for. The
+            next week at the District championship, Coach Cox rested her on the relay, running sophomore
+            3200m-runner Morgan Edwards in her stead. In her first time on the relay, Morgan ran a time of
+            2:25. In the open 800m, despite feeling better, Cassidy ran 2:27. When she reached for it, it just
+            wasn't there yet.</p>
+
+            <figure class="fig fig-right">
+              <img src="images/storyPhotos/Morgan Edwards.jpeg" alt="Morgan Edwards running in a navy John Carroll University singlet, bib number 16." loading="lazy" />
+              <figcaption>Morgan Edwards</figcaption>
+            </figure>
+
+            <p>Cox decided to run Morgan again the next week at the Regionals at Pickerington North. It
+            would give Morgan one more week of experience, in case she needed to run at state, and give
+            Cassidy another week to get stronger. Cox knew that a very difficult decision was looming after
+            Regionals. To have a chance at state, they needed the '4' to be as close to 2:20 as possible —
+            something Cassidy had proven in the past she could do. If Morgan ran 2:20 at the Regional, she
+            would have settled the matter with her spikes and would be on the relay at Jesse Owens. If she ran
+            2:25 again, Cox would probably lean toward going back to Cassidy, relying on her experience and
+            competitive nature, and hoping for the best.</p>
+
+            <p>Morgan ran 2:22.6.</p>
+
+            <p>The 2019 season was a moment in time: Thomas Worthington wouldn't have two
+            Napoleons on the relay ever again — the best sister act in the program since the days of Emily and
+            Nancy Hood in the early 1990s. There was a good possibility the school record would fall. There
+            was a chance they could be at the top of the podium, something they hadn't done in this event in
+            over twenty years. A very bright line has to be drawn, and a runner is either above it or below it;
+            either you run at state or you don't. Cassidy was capable of running the time they needed. Morgan
+            was running better than Cassidy. Neither girl had done anything wrong, but only one could run at
+            the state championship. When a coach decides who runs on the relay at state, it's a decision that
+            lasts forever.</p>
+
+            <p>And it's the kind of decision that keeps track coaches awake at night.</p>
+
+            <h2 class="sec-title">Leadoff</h2>
+
+            <p>For the 4x800m relay, the order many coaches tend to use is 3-4-2-1, meaning they lead
+            off with the third-best runner and save the fastest one for last. When it's time to chase people
+            down — or hold people off — you want the baton in the hands of your best runner. When you get
+            to the state meet, however, coaches have been known to shake things up and 'frontload' their
+            relay. They send faster runners off early, thinking that it does no good to have your best runner
+            get the baton for the final leg if he or she is too far back to do anything about it. Frontloading
+            starts the team off further up in the race and, when your 3 or 4 does get the baton, they will be
+            among faster runners, with the hope that the current of that river will help bring them home. It's a
+            gamble, and it often doesn't work, but it does always ensure one thing: the opening leg of the
+            4x800m relay at the state championship is going to cook.</p>
+
+            <figure class="fig fig-left">
+              <img src="images/storyPhotos/Lydia Miller.jpeg" alt="Lydia Miller running in a Lipscomb University singlet at the Atlantic Sun Conference Championship." loading="lazy" />
+              <figcaption>Lydia Miller</figcaption>
+            </figure>
+
+            <p>Lydia Miller was a talented junior distance runner — a cross country standout built more
+            for the mile than the 800 — and was coach Andy Cox's choice to lead off the 4x800m relay in
+            2019. A former basketball player, 2019 was just her second track season, and she missed
+            qualifying for state in the 1600m by just two spots at the Regional the previous week at
+            Pickerington North. She had shown tremendous improvement and was a great leadoff choice, but
+            I'm not sure she knew what was in store for her at Jesse Owens.</p>
+
+            <p>Thomas Worthington drew lane 2, and in Ohio, runners stay in their lanes for the first
+            300m of the 4x8, before cutting in toward lane 1 in the homestretch. This meant Lydia could see
+            everyone from lanes 3-9 ahead of her to her right, and it must have been quite a sight. As she
+            reached the cut-in line before the home stands, she was in 15th place out of the 18 runners.
+            Beavercreek led off with future Kentucky Wildcat Juliann Williams, who would come back the
+            next day and finish 7th in the mile. On the backstretch of the second lap, Williams broke free
+            from the group of leaders, covered the last 200m in 33 seconds, and ran 2:12, handing off with a
+            10-yard lead over second-place Gahanna Lincoln. Thomas Worthington was six seconds back
+            and not pictured on screen. And while TWHS — sticking with their strategy — was preparing to
+            hand off to their 4, first-place Beavercreek had already given the baton to Jodie Pierce, who
+            would finish 5th in the state in the 800m the following afternoon. Lydia went wide and passed
+            one last girl in the homestretch. She ran 2:18 — the best 800m run of her life — and the Cardinals
+            were in 13th place, 40 yards behind, when she handed off to her teammate.</p>
+
+            <p>The runner who took the baton was Morgan Edwards.</p>
+
+            <h2 class="sec-title">The Second Leg</h2>
+
+            <p>Morgan Edwards had never been in this position before. If you are the leadoff leg in a
+            4x8, it's pretty much the same as running the open 800. But if you're not, if you're running legs
+            2, 3, or 4, once you get the baton, you're out in the middle of the ocean. You have to try to run
+            your race, at your pace, but that is hard. It's difficult to gauge how you're doing when everyone
+            is everywhere. You're trying to catch up, but nothing looks or feels the same. You constantly
+            have to calibrate and recalibrate how you are doing, measuring yourself against moving targets.
+            Throw in the roar of the crowd, the heightened importance of the moment, and it's a challenge to
+            run your best. Not only had Morgan not run a lot of 800 races in her career, this was only her
+            second varsity 4x8, and she had never run on a stage anywhere near this big.</p>
+
+            <p>Morgan did know she was in 13th place on a team that had designs on winning. She
+            quickly moved up to 9th at the 400m mark and had only lost two seconds to the leader from
+            Beavercreek on her first time around the track. But by the 650m mark, at the top of the
+            backstretch, she was 12 seconds back and some of those she had passed had moved back ahead
+            of her. She fought and hung on as best she could and handed off to Carina Napoleon in twelfth.
+            Morgan ran 2:22, another personal best, and a fantastic result for her first trip to state. But the
+            Cardinals were now 14 seconds back, 85 yards out of first, and trailing eleven of the best teams
+            in Ohio, including Beavercreek, who was running away with it.</p>
+
+            <h2 class="sec-title">The Third Leg</h2>
+
+            <figure class="fig fig-right">
+              <img src="images/storyPhotos/Carina Napoleon.png" alt="Carina Napoleon smiling in an Ohio State University singlet, bib number 231, at the Big Ten Outdoor Championships." loading="lazy" />
+              <figcaption>Carina Napoleon</figcaption>
+            </figure>
+
+            <p>Carina Napoleon had one of the most underrated careers in Worthington girls' track
+            history. For her first two years in the program, she lived in the shadow of her celebrated older
+            sister, Gia. Carina's last two years were hampered by health problems and, more significantly, by
+            COVID. The pandemic took her junior outdoor and senior indoor track seasons, which would
+            have been two of her best. But when all was said and done, Carina Napoleon was one of the
+            all-time greats. She made 7 state podiums in her time, won the state championship in the indoor
+            800m in 2020, and her name is all over the TWHS track and field record books. But make no
+            mistake: her shining moment was the third leg of the 4x800m relay at the OHSAA State
+            Championship in 2019. Almost fitting for her career, the significant portion of the relay leg
+            appears off screen. In fact, when watching the video — filmed by a Gahanna Lincoln family —
+            you aren't aware too much of what is happening with Carina and the TWHS relay until the little
+            brother of one of the Gahanna runners utters offscreen the understatement of the day:</p>
+
+            <div class="pull-quote">
+              <blockquote>"There goes Gia's sister."</blockquote>
+            </div>
+
+            <p>Gahanna closed up the gap on Beavercreek by the 400m mark of leg 3 and, on screen, it
+            looked to be a two-team race. But by the 300m mark of her own leg, Carina had shaved
+            Worthington's deficit from 14 seconds to 10 seconds, and halfway through her leg, it was down
+            to 8. And when the leaders reached the 600m mark, in the far right corner of the screen, Carina
+            Napoleon appears on screen, in third. She was now less than 5 seconds off the lead, less than 35
+            yards behind, and closing. In the final meters, as she continued to chase down the leaders, Faith
+            Min from Mason passed her back, but she handed off to Gia in fourth place, less than 2
+            seconds behind Beavercreek, Gahanna Lincoln and Mason. The Cardinals were back in it. Carina
+            had run 2:08.3, the fastest 4x800m relay leg in school history.</p>
+
+            <p>It was a record she would hold for a little over two minutes.</p>
+
+            <h2 class="sec-title">The Anchor</h2>
+
+            <p>In 2016, of the 16 young ladies who qualified for the Division 1 State Championship in
+            the 800m, only two were freshmen: Gia Napoleon of Thomas Worthington and Madison
+            Martinez of Gahanna Lincoln. They had finished first and second — with Madison winning — at
+            the Regional at Pickerington North, and looked on to the state meet, despite neither of them
+            having been in that situation before. In the 2016 state final at Jesse Owens, senior Brittany Aveni
+            from Geneva won, impressively, in 2:07.42, with Madison in 4th, two spots ahead of Gia. It was
+            the start of one of the best four-year rivalries in the history of Ohio high school track and field.</p>
+
+            <p>At the 2017 meet, as sophomores, by the 600m mark of the final, it was down to Gia,
+            who was leading, and Madison, who was right on her shoulder. In the homestretch, Madison
+            went wide to give herself room to pass in lane 2, but Gia was too strong, pulling away to win the
+            state title in 2:07.47, still the Thomas Worthington school record. In the 2018 meet, now juniors,
+            it was Martinez's time to shine. With 300m to go, Madison stretched out her lead on the
+            backstretch. Gia, back in fourth, tried valiantly to close the gap but it was not to be. By the time
+            Madison reached the homestretch, with 100m to go, it was over. Martinez was five yards ahead
+            of everyone and was pulling ahead toward a state championship of her own. Gia finished third,
+            with Hilliard Davidson's Lindsay Stull wedged between them.</p>
+
+            <p>2019 looked to be the final chapter in the rivalry.</p>
+
+            <figure class="fig fig-left">
+              <img src="images/storyPhotos/Gia Napoleon.jpeg" alt="Gia Napoleon running in an Ohio State University singlet, bib number 318." loading="lazy" />
+              <figcaption>Gia Napoleon</figcaption>
+            </figure>
+
+            <p>When she got the baton, Gia Napoleon had a big task in front of her. She was starting
+            five yards back from an outstanding trio of runners. Mason's anchor was Maddie Ullom, who
+            would go on to run collegiately for Penn State and, in 2022, would finish third in the Big Ten
+            Conference in the 1500m. Madison Martinez of Gahanna would run for Villanova and twice was
+            the Big East conference champion in the 800m. And the next season, Beavercreek's anchor,
+            Taylor Ewert, would be named the Gatorade High School Track and Field Athlete of the Year.
+            Not for Ohio — for the United States of America.</p>
+
+            <p>Gia immediately caught up and, breaking a cardinal rule of track, went out to lane two on
+            the curve and passed them all, lengthening the distance of her relay leg by a couple of meters.
+            Beavercreek's Ewert responded, trying to stay with her, but by the 200m mark, Gia was opening
+            up a gap. Martinez closed that gap, tracking Gia, and with 400m to go, the two of them had
+            opened up a slight lead on Ewert and Ullom. By 600m, the duo led by 10 yards and it was down
+            to Madison Martinez and Gia Napoleon — Gahanna Lincoln and Thomas Worthington. As they
+            reached the final straightaway, the 2018 state champion pulled up on the shoulder of the 2017
+            state champion, the crowd rose, and it was a race to the finish. Seemingly attached at the hip,
+            both kept surging and responding, pulling ahead and falling behind, and they crossed the finish
+            line in a virtual tie, with both runners going down on the track in exhaustion, as the crowd
+            waited.</p>
+
+            <p>"I really didn't even know who won," Gia told the <em>Columbus Dispatch</em>. "This is what's
+            been happening the whole postseason when we get together." Martinez, scraped up after falling
+            to the track, said, "The crowd was so loud when we got to the line, I wasn't sure who won. I felt
+            like I got ahead of her for a little bit, but she's a battler."</p>
+
+            <p>In a sentiment only a four-year rivalry could produce, Martinez added, "It's so fun racing
+            against her."</p>
+
+            <p>Finally, after a long wait, the official timer, having checked the photo finish, rendered the
+            final verdict:</p>
+
+            <div class="results">
+              <div class="results-head">Division 1 Girls 4x800m Relay — Final</div>
+              <div class="results-row is-winner">
+                <span class="results-pos">1</span>
+                <span class="results-team">Thomas Worthington</span>
+                <span class="results-time">8:55.85</span>
+              </div>
+              <div class="results-row">
+                <span class="results-pos">2</span>
+                <span class="results-team">Gahanna Lincoln</span>
+                <span class="results-time">8:55.90</span>
+              </div>
+              <div class="results-row">
+                <span class="results-pos">3</span>
+                <span class="results-team">Beavercreek</span>
+                <span class="results-time">8:58.95</span>
+              </div>
+              <div class="results-row">
+                <span class="results-pos">4</span>
+                <span class="results-team">Mason</span>
+                <span class="results-time">8:59.71</span>
+              </div>
+            </div>
+
+            <p>After two miles, the top two teams were separated by .05 seconds, mere inches. Gia
+            Napoleon had run the final 800m leg in 2:06.2. Together, she and her sister Carina had covered
+            the last two legs in 4:13.5. A few minutes after the race, I sent a text to their mother, Amy, who
+            was cheering from the stands: "Tough to beat one mile of Napoleons." She responded with a
+            sentiment many were feeling that day:</p>
+
+            <div class="pull-quote">
+              <blockquote>"I cannot even breathe."</blockquote>
+              <cite>— Amy Napoleon</cite>
+            </div>
+
+            <div class="section-rule"><span>&#9670;</span></div>
+
+            <p>The girls' Division 1 4x800m relay in 2019, depending upon your standards of
+            measurement, may well have been the greatest race in the history of the Ohio High School
+            Athletic Association. The OHSAA first introduced the 4x800m relay at the state championship in
+            1980. Since that 1980 meet, across all divisions, approximately 2,400 girls' 4x800m relays have
+            competed at state. Of that 2,400, only 7 of those relays have ever broken 9 minutes, and four of
+            them — Thomas Worthington, Gahanna Lincoln, Beavercreek, and Mason — were in this race.
+            And, in some sense, ALL 7 of them were in this race… The only teams to break 9:00 prior to
+            2019 were Gahanna Lincoln and Mason in 2017, and Gahanna Lincoln in 2018, and their 2019
+            versions of the relay prominently featured returning athletes who had run on those relays the
+            previous two years.</p>
+
+            <p>From 1980 through 2016, no team had ever broken 9:00 in a 4x800 relay in Ohio. And
+            following the 2019 meet, no team has broken it since.</p>
+
+            <p>Consider the following:</p>
+
+            <ul class="facts">
+              <li>Mason High School ran 8:59.71 — the 7th-fastest time in state history — and
+              finished fourth. It was also the 4th-fastest time in the United States in 2019, behind
+              the three teams that beat them at the OHSAA State Championship.</li>
+              <li>Beavercreek, which ran 8:58.95, had four All-State runners on their relay,
+              meaning that all four girls on Beavercreek's relay made the podium in an
+              individual distance event at the 2019 state championship — and they finished third.</li>
+              <li>On Gahanna Lincoln's 4x800 relay, they had two 800m individual state
+              champions — Madison Martinez and 2018 indoor 800m champion Shynae Deas.
+              They finished second.</li>
+              <li>Thomas Worthington also had two 800m individual state champions on their
+              relay, Gia Napoleon and 2020 indoor state champion Carina Napoleon. With
+              Lydia Miller — who would go on to be an All-American at Lipscomb — it was
+              enough to hold off Gahanna by .05 of a second.</li>
+            </ul>
+
+            <p>Of the 16 runners on the top four teams, 15 of them went on to run in college; the one
+            who did not was Emma Kruse of Mason, who was a top-ranked tennis player. Of those 15 who
+            ran in college, 14 of them ran at the Division 1 level, representing such prominent programs as
+            Penn State, Syracuse, Arkansas, Kentucky, Ohio State, Indiana, Michigan State, Belmont,
+            Lipscomb and Villanova. Between the indoor and outdoor state meets, 13 of the 16 made the
+            podium in their careers in an individual event. The group collectively had 50 All-Ohio
+            performances in individual events in high school. Five of the sixteen were state champions,
+            representing 12 state titles, headed up by Beavercreek's Taylor Ewert, who won 6 of them by
+            herself.</p>
+
+            <p>They all combined in 2019 to provide the best nine minutes in the history of the state
+            championship.</p>
+
+            <div class="epilogue-rule">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+
+            <p>Gia Napoleon signed with Ohio State University to run track and field. She incurred a
+            major injury to her hip and it was a long and laborious rehabilitation for her. She came back from
+            this setback to finish 8th in the Big Ten in the indoor mile, 7th in the outdoor 1500m and 4th as
+            part of the distance medley in 2023. She finished her career in the top 5 in program history in the
+            1500m. Gia graduated from Ohio State in 2024 and is currently working as a victim-witness
+            advocate for the Franklin County Prosecutor and is contemplating law school with an eye on
+            criminal justice.</p>
+
+            <div class="epilogue-rule">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+
+            <p>Carina Napoleon won the state championship in the indoor 800m in 2020, just prior to
+            COVID. She was reunited with her sister by also signing to run track for the Ohio State
+            Buckeyes. She experienced a significant lung injury which hampered her early career, but she
+            came back to compete at three Big Ten indoor and three outdoor track and field championships
+            for Ohio State, with an individual top finish of 12th in the 800m at the 2024 Big Ten Outdoor
+            Championships in Ann Arbor. Carina graduated in the spring of 2025.</p>
+
+            <div class="epilogue-rule">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+
+            <p>Cassidy Shaver ran track and field at Otterbein University in Westerville, a Division 3
+            school that is part of the Ohio Athletic Conference. She had an outstanding career for Otterbein,
+            making three podiums in her career, including finishing 5th in the 800m at the OAC Indoor Track
+            and Field Championships in 2022. Cassidy is currently studying to be a dentist, like her father.</p>
+
+            <p>At that same 2022 OAC championship meet, Cassidy's old teammate, Morgan Edwards,
+            finished 5th in the 1000m run for John Carroll University out of Cleveland. Morgan showed
+            tremendous range for the Blue Streaks, scoring at the OACs in the mile and the 5000m distances
+            throughout her career. Morgan is currently a law student at Case Western Reserve Law School in
+            Cleveland.</p>
+
+            <div class="epilogue-rule">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+
+            <p>By her senior year of high school, Lydia Miller had improved to the point where she was
+            receiving attention from Division 1 colleges, including her preferred choice of Miami University
+            in Oxford. In one of the more questionable, self-imposed recruiting guidelines in the annals of
+            the sport, Miami coach Tom Chorny informed Lydia he was no longer interested in her services
+            once he learned of her desire to become a nurse. Citing the long hours nurses spend on their feet
+            during clinicals, Chorny felt she could not reach her potential as a runner while pursuing that
+            major. Lydia eventually signed with Lipscomb University, a Division 1 school in Nashville, as
+            their coach, Nick Polk, felt she was worth a shot, despite the rigors of nursing school.</p>
+
+            <p>In June of 2023, Lydia Miller finished 19th in the nation in the 5000m at the NCAA
+            Division 1 Track and Field Championships in Austin, Texas, a race won by future Olympian
+            Parker Valby of Florida. Between the indoor and outdoor Atlantic Sun Conference track
+            championships, Lydia made the podium nine times for Lipscomb, including being conference
+            champion in the indoor 3000m in 2024. She never once finished outside the top 5 at the ASUN
+            conference cross country meet, and in the fall of 2023, she finished 38th at the NCAA Division 1
+            Cross Country National Championship, becoming the first female runner in Lipscomb history to
+            be a cross country All-American.</p>
+
+            <p>Lydia Miller graduated from Lipscomb in the spring of 2024 and is currently working at
+            Riverside Hospital in Columbus. As a nurse.</p>
+
+          </div>
+        </div>
+      </article>
+
+      <!-- ── Sidebar ── -->
+      <aside style="position:sticky;top:90px;">
+
+        <div style="background:#fff;border-radius:0.875rem;padding:1.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid #EEF0F5;">
+            <div style="width:3px;height:18px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.0625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.01em;margin:0;">More Stories</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <a href="stories.html" class="story-link">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#C0182A;color:#fff;font-size:0.6875rem;font-weight:700;flex-shrink:0;">1</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Tops in the County</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Franklin County, 1940</div>
+              </div>
+            </a>
+            <a href="greatest-race.html" class="story-link active-story">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#C0182A;color:#fff;font-size:0.6875rem;font-weight:700;flex-shrink:0;">2</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;line-height:1.35;margin-bottom:0.2rem;">The Greatest Race</div>
+                <div class="story-meta" style="font-size:0.7125rem;">State Championship, 2019</div>
+              </div>
+            </a>
+            <a href="long-walk.html" class="story-link">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#C0182A;color:#fff;font-size:0.6875rem;font-weight:700;flex-shrink:0;">3</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Here Ends His Long Walk</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Worthington High, 1952</div>
+              </div>
+            </a>
+            <a href="#" class="story-link story-disabled">
+              <span class="story-num" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#EEF0F5;color:#64748B;font-size:0.6875rem;font-weight:700;flex-shrink:0;">4</span>
+              <div>
+                <div class="story-title" style="font-size:0.8125rem;font-weight:600;color:#334155;line-height:1.35;margin-bottom:0.2rem;">Story 4</div>
+                <div class="story-meta" style="font-size:0.7125rem;color:#94A3B8;">Coming soon</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:0.875rem;padding:1.5rem;box-shadow:0 2px 12px rgba(27,42,94,0.07),0 6px 28px rgba(27,42,94,0.05);">
+          <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:1rem;">
+            <div style="width:3px;height:18px;border-radius:999px;background:#C0182A;flex-shrink:0;"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.0625rem;font-weight:700;color:#1B2A5E;letter-spacing:-0.01em;margin:0;">About the Author</h2>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.875rem;">
+            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1B2A5E,#C0182A);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;">BD</span>
+            </div>
+            <div>
+              <div style="font-size:0.875rem;font-weight:600;color:#1E293B;">Bill Darling</div>
+              <div style="font-size:0.75rem;color:#64748B;">TWHS Track Coach</div>
+            </div>
+          </div>
+          <p style="font-size:0.8125rem;color:#475569;line-height:1.7;margin:0;">Historian and archivist of the Worthington and Thomas Worthington track &amp; field program, documenting its history from the early 20th century to the present.</p>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer style="background:#0D1730;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;">
+        <div>
+          <img src="brand_assets/TW_TF_Color on Blue Horiz@3x.png" alt="TWHS Cardinals" style="height:52px;width:auto;margin-bottom:0.875rem;" />
+          <p style="color:#64748B;font-size:0.8125rem;line-height:1.75;max-width:260px;">TWHS Track &amp; Field History — preserving the legacy of Cardinal athletes and coaches.</p>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">History</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="seasons.html" class="footer-link">Seasons</a></li>
+            <li><a href="records.html" class="footer-link">Records</a></li>
+            <li><a href="championships.html" class="footer-link">Championships</a></li>
+            <li><a href="allTimeList.html" class="footer-link">All-Time List</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">People</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="coaches.html" class="footer-link">Coaches</a></li>
+            <li><a href="stories.html" class="footer-link">Athlete Stories</a></li>
+            <li><a href="gallery.html" class="footer-link">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:#F9A8B3;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.875rem;font-family:'Inter',sans-serif;">Form Submission</h3>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe5yRCDTfWdMk8M3LWF02n-X0OLLcj51_g94JARUkjpljf9Rw/viewform?usp=publish-editor" target="_blank" class="footer-link">Submit a Photo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;text-align:center;">
+        <p style="color:#475569;font-size:0.8rem;margin:0;">&copy; TWHS Track &amp; Field History. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
