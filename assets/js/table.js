@@ -42,6 +42,17 @@ function defaultSort(columns) {
   return null;
 }
 
+// Always show times to the hundredths: 10.5 -> "10.50", 52 -> "52.00",
+// "4:09.1" -> "4:09.10". The JSON stores many times as numbers, which drops
+// trailing zeros. Anything that isn't a time is returned unchanged.
+function formatTime(v) {
+  const m = String(v == null ? "" : v).trim().match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/);
+  if (!m) return v ?? "";
+  let secs = parseFloat(m[2]).toFixed(2);
+  if (m[1]) secs = secs.padStart(5, "0"); // keep "4:09.10", not "4:9.10"
+  return m[1] ? `${m[1]}:${secs}` : secs;
+}
+
 // Load JSON
 fetch("assets/json/allTimeListUpdated.json")
   .then(res => res.json())
@@ -156,6 +167,9 @@ function loadEvent(category, eventName) {
 
     columns.forEach(col => {
       let value = record[col] ?? "";
+      if (col === "Time") value = formatTime(value);
+      // Only timed events get the hover marker; field marks keep a plain "*"
+      if (col === "Meet" && isTime(record.Time)) value = formatMeet(value);
       rowsHtml += `<td>${value}</td>`;
     });
 
