@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; background: #F8F9FB; color: #1E293B; }
     h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
@@ -71,17 +71,23 @@
        A quiet label on a hairline rule. Deliberately small: it should mark a
        break in the grid without claiming a band of the page for itself. */
     .sec-head {
-      display: flex; align-items: center; gap: 0.75rem;
-      margin: 2.5rem 0 1rem;
+      display: flex; align-items: baseline; gap: 0.875rem;
+      margin: 3rem 0 1.25rem;
     }
-    .sec-head:first-child { margin-top: 0; }
+    .sec-head:first-child { margin-top: 0.25rem; }
     .sec-label {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.6875rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.12em;
+      font-family: 'Playfair Display', Georgia, serif; font-style: italic;
+      font-size: 1.625rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1;
+      color: #1B2A5E; white-space: nowrap;
+    }
+    .sec-count {
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
       color: #94A3B8; white-space: nowrap;
     }
-    .sec-rule { flex: 1; height: 1px; background: linear-gradient(90deg, #E2E8F0, rgba(226,232,240,0)); }
+    .sec-rule {
+      flex: 1; height: 1px; align-self: center;
+      background: linear-gradient(90deg, #C0182A 0, rgba(192,24,42,0.3) 2.5rem, #E2E8F0 30%, rgba(226,232,240,0));
+    }
 
     /* ── Masonry grid ── */
     .masonry { column-count: 3; column-gap: 1.25rem; }
@@ -97,9 +103,9 @@
 
     .tile {
       break-inside: avoid; margin-bottom: 1.25rem;
-      background: #fff; border-radius: 0.75rem; overflow: hidden;
-      box-shadow: 0 2px 10px rgba(27,42,94,0.07), 0 5px 20px rgba(27,42,94,0.04);
-      display: block; width: 100%; padding: 0; border: none; text-align: left;
+      background: #fff; border-radius: 0.375rem; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(27,42,94,0.07), 0 8px 22px -6px rgba(27,42,94,0.12);
+      display: block; width: 100%; padding: 0.4375rem; border: none; text-align: left;
       cursor: zoom-in; font-family: 'Inter', sans-serif;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                   box-shadow 0.3s ease;
@@ -111,7 +117,7 @@
     .tile:focus-visible { outline: 2px solid #C0182A; outline-offset: 3px; }
     .tile:active { transform: translateY(-1px); }
 
-    .tile-frame { position: relative; overflow: hidden; line-height: 0; }
+    .tile-frame { position: relative; overflow: hidden; line-height: 0; border-radius: 0.1875rem; }
     .tile-frame img {
       width: 100%; height: auto; display: block;
       transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
@@ -133,9 +139,11 @@
     }
     .tile:hover .tile-scrim, .tile:focus-visible .tile-scrim { opacity: 1; }
     .tile-year {
-      position: absolute; left: 0.75rem; bottom: 0.7rem; z-index: 2;
-      font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.06em;
-      color: #fff; text-transform: uppercase; pointer-events: none;
+      position: absolute; left: 0.625rem; bottom: 0.625rem; z-index: 2;
+      font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.06em; line-height: 1;
+      color: #1B2A5E; background: #fff; padding: 0.3rem 0.5rem; border-radius: 999px;
+      box-shadow: 0 2px 6px rgba(13,23,48,0.25);
+      text-transform: uppercase; pointer-events: none;
       opacity: 0; transform: translateY(4px);
       transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -147,7 +155,8 @@
       transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .captions-on .tile-caption { max-height: 340px; }
-    .tile-caption-inner { padding: 0.85rem 1rem 1rem; border-top: 1px solid #EEF0F5; }
+    .tile-caption-inner { padding: 0.75rem 0.375rem 0.375rem; }
+    .tile-caption-inner::before { content: ''; display: block; width: 1.5rem; height: 2px; background: #C0182A; margin-bottom: 0.5rem; border-radius: 1px; }
 
     .tile-title {
       font-family: 'Playfair Display', serif; font-size: 0.9375rem; font-weight: 700;
@@ -264,6 +273,7 @@
         <span style="color:#475569;font-size:0.8125rem;">&#x203A;</span>
         <span style="color:#CBD5E1;font-size:0.8125rem;">Gallery</span>
       </div>
+      <div style="font-size:0.6875rem;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:#F9A8B3;margin-bottom:0.625rem;">The Collection</div>
       <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.75rem);font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.75rem;">
         Photo Gallery
       </h1>
@@ -751,7 +761,8 @@
 
       const head = document.createElement('div');
       head.className = 'sec-head';
-      head.innerHTML = '<span class="sec-label">' + esc(sec.label) + '</span>'
+      head.innerHTML = '<h2 class="sec-label">' + esc(sec.label) + '</h2>'
+                     + '<span class="sec-count">' + items.length + (items.length === 1 ? ' photo' : ' photos') + '</span>'
                      + '<span class="sec-rule"></span>';
       sectionsEl.appendChild(head);
 
